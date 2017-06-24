@@ -13,18 +13,18 @@ import java.io.Serializable;
 
 public abstract class OutputObject implements Serializable {
 
-    private static final long serialVersionUID = -6326248205032370705L;
+	private static final long serialVersionUID = -6326248205032370705L;
 
-    // Initialization method,
-    public abstract void init(int noOfFields);
+	// Initialization method,
+	public abstract void init(int noOfFields);
 
-    // Uploads/persists the results of the processing.
-    public abstract void loadResult(Object o) throws Exception;
+	// Uploads/persists the results of the processing.
+	public abstract void loadResult(Object o) throws Exception;
 
-    // Checker method for Initializatioln.
-    protected abstract boolean isInitialized();
+	// Checker method for Initializatioln.
+	protected abstract boolean isInitialized();
 
-    // A simple toString() method to provide the state of
-    // the current stage of Precis Processing.
-    public abstract String toString();
+	// A simple toString() method to provide the state of
+	// the current stage of Precis Processing.
+	public abstract String toString();
 }

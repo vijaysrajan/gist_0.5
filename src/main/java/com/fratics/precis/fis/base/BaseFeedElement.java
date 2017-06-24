@@ -1,6 +1,6 @@
 package com.fratics.precis.fis.base;
 
-import java.util.BitSet;
+import com.fratics.precis.fis.util.BitSet;
 
 /*
  * This class is the actual bit representation of a record in the input feed. 
@@ -9,87 +9,87 @@ import java.util.BitSet;
 
 public class BaseFeedElement {
 
-    protected BitSet b;
-    protected double metric;
+	protected BitSet b;
+	protected double metric;
 
-    public BaseFeedElement() {
-        b = new BitSet();
-    }
+	public BaseFeedElement() {
+		b = new BitSet();
+	}
 
-    public BaseFeedElement(int noOfBits) {
-        b = new BitSet(noOfBits);
-    }
+	public BaseFeedElement(int noOfBits) {
+		b = new BitSet(noOfBits);
+	}
 
-    public BitSet getBitSet() {
-        return b;
-    }
+	public BitSet getBitSet() {
+		return b;
+	}
 
-    public void setBitSet(BitSet b) {
-        this.b = b;
-    }
+	public void setBitSet(BitSet b) {
+		this.b = b;
+	}
 
-    public BitSet and(BaseFeedElement b) {
-        BitSet bs = (BitSet) this.b.clone();
-        bs.and(b.getBitSet());
-        return bs;
-    }
+	public BitSet and(BaseFeedElement b) {
+		BitSet bs = (BitSet) this.b.clone();
+		bs.and(b.getBitSet());
+		return bs;
+	}
 
-    public BitSet or(BaseFeedElement b) {
-        BitSet bs = (BitSet) this.b.clone();
-        bs.or(b.getBitSet());
-        return bs;
-    }
+	public BitSet or(BaseFeedElement b) {
+		BitSet bs = (BitSet) this.b.clone();
+		bs.or(b.getBitSet());
+		return bs;
+	}
 
-    public BitSet xor(BaseFeedElement b) {
-        BitSet bs = (BitSet) this.b.clone();
-        bs.xor(b.getBitSet());
-        return bs;
-    }
+	public BitSet xor(BaseFeedElement b) {
+		BitSet bs = (BitSet) this.b.clone();
+		bs.xor(b.getBitSet());
+		return bs;
+	}
 
-    public BitSet and(BitSet b) {
-        BitSet bs = (BitSet) this.b.clone();
-        bs.and(b);
-        return bs;
-    }
+	public BitSet and(BitSet b) {
+		BitSet bs = (BitSet) this.b.clone();
+		bs.and(b);
+		return bs;
+	}
 
-    public BitSet or(BitSet b) {
-        BitSet bs = (BitSet) this.b.clone();
-        bs.or(b);
-        return bs;
-    }
+	public BitSet or(BitSet b) {
+		BitSet bs = (BitSet) this.b.clone();
+		bs.or(b);
+		return bs;
+	}
 
-    public BitSet xor(BitSet b) {
-        BitSet bs = (BitSet) this.b.clone();
-        bs.xor(b);
-        return bs;
-    }
+	public BitSet xor(BitSet b) {
+		BitSet bs = (BitSet) this.b.clone();
+		bs.xor(b);
+		return bs;
+	}
 
-    public void setBit(int e) {
-        this.b.set(e);
-    }
+	public void setBit(int e) {
+		this.b.set(e);
+	}
 
-    public double getMetric() {
-        return metric;
-    }
+	public double getMetric() {
+		return metric;
+	}
 
-    public void setMetric(double metric) {
-        this.metric = metric;
-    }
+	public void setMetric(double metric) {
+		this.metric = metric;
+	}
 
-    public int getCardinality() {
-        return this.b.cardinality();
-    }
+	public int getCardinality() {
+		return this.b.cardinality();
+	}
 
-    /*
-     * Cardinality divided by 2 gives you the actual number of dimensions or
-     * values in the input record.
-     */
+	/*
+	 * Cardinality divided by 2 gives you the actual number of dimensions or
+	 * values in the input record.
+	 */
 
-    public int getNumberofDimVals() {
-        return this.b.cardinality() / 2;
-    }
+	public int getNumberofDimVals() {
+		return this.b.cardinality() / 2;
+	}
 
-    public String toString() {
-        return this.b.toString() + "," + metric;
-    }
+	public String toString() {
+		return this.b.toString() + "," + metric;
+	}
 }

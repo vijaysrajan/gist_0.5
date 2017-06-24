@@ -16,7 +16,7 @@ package com.fratics.precis.fis.base;
 
 public abstract class PrecisProcessor extends PrecisBase {
 
-    // The functionality provided is defined by the overridden process() method
-    // in the derived class.
-    public abstract boolean process(ValueObject o) throws Exception;
+	// The functionality provided is defined by the overridden process() method
+	// in the derived class.
+	public abstract boolean process(ValueObject o) throws Exception;
 }

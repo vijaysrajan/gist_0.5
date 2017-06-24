@@ -10,12 +10,12 @@ import java.io.Serializable;
  */
 
 public class ValueObject implements Serializable {
-    private static final long serialVersionUID = 1590842569304698182L;
-    public InputObject inputObject = null;
-    public OutputObject resultObject = null;
+	private static final long serialVersionUID = 1590842569304698182L;
+	public InputObject inputObject = null;
+	public OutputObject resultObject = null;
 
-    // A Simple toString() method, used in printing both Input & Output Objects.
-    public String toString() {
-        return inputObject.toString() + "\n" + resultObject.toString();
-    }
+	// A Simple toString() method, used in printing both Input & Output Objects.
+	public String toString() {
+		return inputObject.toString() + "\n" + resultObject.toString();
+	}
 }
