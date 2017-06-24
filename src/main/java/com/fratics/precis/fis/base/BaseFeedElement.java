@@ -77,7 +77,7 @@ public class BaseFeedElement {
 	}
 
 	public int getCardinality() {
-		return this.b.cardinality();
+		return (int) this.b.cardinality();
 	}
 
 	/*
@@ -86,7 +86,7 @@ public class BaseFeedElement {
 	 */
 
 	public int getNumberofDimVals() {
-		return this.b.cardinality() / 2;
+		return (int) (this.b.cardinality() / 2);
 	}
 
 	public String toString() {

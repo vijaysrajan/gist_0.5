@@ -203,6 +203,7 @@ public abstract class InputObject implements Serializable {
 
 		// al.sort(new BitSetComparator());
 
+		
 		BitSet z = null;
 		for (BitSet x : al) {
 			if (z == null) {
