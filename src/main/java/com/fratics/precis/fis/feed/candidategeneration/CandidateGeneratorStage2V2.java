@@ -66,6 +66,7 @@ public class CandidateGeneratorStage2V2 extends PrecisProcessor {
 		}
 
 		// Apply the threshold handler.
+		o.inputObject.setThreshold(thresholdCalculator.getThresholdValue(o.inputObject.currentStage));
 		boolean ret = o.inputObject.applyThreshold();
 		milliSec2 = new Date().getTime();
 		System.err.println("No of Candidates After Applying Threshold::" + o.inputObject.currCandidateSet.size());

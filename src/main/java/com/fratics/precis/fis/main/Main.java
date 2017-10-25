@@ -6,6 +6,7 @@ import com.fratics.precis.fis.main.count.CountPrecisMain;
 import com.fratics.precis.fis.main.metrics.MetricsPrecisMain;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.util.ConfigObject;
+import com.fratics.precis.util.ThresholdCalculator;
 
 /*
  * Main Driver for Precis Application Engine.
@@ -36,6 +37,10 @@ public class Main {
 
 			// Initialize the precis configuration.
 			PrecisConfigProperties.init();
+
+			//Initialize Threshold calculator
+			ThresholdCalculator thresholdCalculator = ThresholdCalculator.getInstance();
+			thresholdCalculator.initialize();
 
 			// Verify, its either a count precis (or) metrics precis.
 			// and launch the desired Precis.

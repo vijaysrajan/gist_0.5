@@ -7,6 +7,7 @@ import com.fratics.precis.fis.base.FieldObject;
 import com.fratics.precis.fis.base.MutableDouble;
 import com.fratics.precis.fis.base.ValueObject;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
+import com.fratics.precis.util.ThresholdCalculator;
 
 /*
  * DimValIndex Generates the values from the Input Characteristics Loaded from the Input feed.
@@ -26,6 +27,9 @@ public class DimValIndex extends DimValIndexBase {
 	// Threshold for the entire Precis application.
 	private double threshold = 0.0;
 
+	public DimValIndex(){
+    }
+
 	public DimValIndex(double threshold) {
 		this.threshold = threshold;
 	}
@@ -35,6 +39,7 @@ public class DimValIndex extends DimValIndexBase {
 	public boolean process(ValueObject o) throws Exception {
 		int valIndex = 0;
 		int dimIndex = 0;
+        this.threshold = thresholdCalculator.getThresholdValue(1);
 		o.inputObject.setThreshold(this.threshold);
 		FieldObject[] fi = o.inputObject.getFieldObjects();
 		for (int i = 0; i < fi.length; i++) {

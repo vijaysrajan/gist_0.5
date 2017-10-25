@@ -28,6 +28,13 @@ public class PrecisConfigProperties {
 	public static boolean DUMP_DIM_FEED = false;
 	public static boolean DUMP_BITSET_FEED = false;
 	public static HashSet<String> IGN_WORDS = new HashSet<String>(Arrays.asList("null", "", "0"));
+	public static boolean HIERARCHY_FIELDS_ENABLED = false;
+	public static boolean USE_THRESHOLD_GEN = false;
+    public static boolean USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3 = false;
+    public static double THRESHOLD_UPTO_LEVEL_3 = 1;
+    public static boolean USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3 = false;
+    public static String THRESHOLD_GEN_FORMULA_AFTER_LEVEL_3 ="4:1,5:2,6:3,7:4,8:5";
+
 
 	private static String convertSpecialChar(String s) {
 		if (s.charAt(0) == '\\' && s.charAt(1) == 'u') {
@@ -156,6 +163,36 @@ public class PrecisConfigProperties {
 			IGN_WORDS = new HashSet<String>(Arrays.asList(tmp.split(",")));
 		}
 
+        tmp = c.getProperties().getProperty("HIERARCHY_FIELDS_ENABLED");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            HIERARCHY_FIELDS_ENABLED = Boolean.parseBoolean(tmp);
+        }
+
+        tmp = c.getProperties().getProperty("USE_THRESHOLD_GEN");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            USE_THRESHOLD_GEN = Boolean.parseBoolean(tmp);
+        }
+
+
+        tmp = c.getProperties().getProperty("USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3 = Boolean.parseBoolean(tmp);
+        }
+
+        tmp = c.getProperties().getProperty("THRESHOLD_UPTO_LEVEL_3");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            THRESHOLD_UPTO_LEVEL_3 = Double.parseDouble(tmp);
+        }
+
+        tmp = c.getProperties().getProperty("THRESHOLD_GEN_FORMULA_AFTER_LEVEL_3");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            THRESHOLD_GEN_FORMULA_AFTER_LEVEL_3 = tmp;
+        }
+
+        tmp = c.getProperties().getProperty("USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3 = Boolean.parseBoolean(tmp);
+        }
 	}
 
 }

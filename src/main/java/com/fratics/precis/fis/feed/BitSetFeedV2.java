@@ -62,6 +62,7 @@ public class BitSetFeedV2 extends PrecisProcessor {
 		boolean elementAddedflag = false;
 		boolean metricGenerated = false;
 		double metric = 0.0;
+		double totalMetricValue = 0.0;
 		long lineNumber = 0;
 		// read the input stream object
 		while ((str = ps.readStream()) != null) {
@@ -77,6 +78,16 @@ public class BitSetFeedV2 extends PrecisProcessor {
 				String tmpDimVal = fi[i].getSchemaElement().fieldName + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR
 						+ str[fi[i].getSchemaElement().fieldIndex];
 
+
+                //Generate Current Line Metric
+                metric = Double.parseDouble(str[o.inputObject.getMetricIndex()]);
+
+                //Generate total metric Values
+                if(!metricPrecis)
+                    totalMetricValue++;
+                else
+                    totalMetricValue = totalMetricValue + metric;
+
 				// Checks if the value is present in DimValindex.
 				if (DimValIndex.dimMap.containsKey(tmpDim)) {
 					if (DimValIndex.dimValMap.containsKey(tmpDimVal)) {
@@ -88,7 +99,6 @@ public class BitSetFeedV2 extends PrecisProcessor {
 						elementAddedflag = true;
 						if (metricPrecis && !metricGenerated) {
 							metricGenerated = true;
-							metric = Double.parseDouble(str[o.inputObject.getMetricIndex()]);
 							e.setMetric(metric);
 						}
 						if (!metricPrecis && !metricGenerated) {
@@ -114,11 +124,13 @@ public class BitSetFeedV2 extends PrecisProcessor {
 			}
 		}
 
-		// o.inputObject.dataFeedTrie.print();
-
+		//o.inputObject.dataFeedTrie.print();
+        //set the total metric Values.
+        thresholdCalculator.setTotalValue(totalMetricValue);
 		// Dump the contents of partitioner as a file.
 		// if (PrecisConfigProperties.DUMP_BITSET_FEED) partitioner.dump();
 		// Dump the contents of First Stage Candidates.
+
 		Util.dump(1, o);
 		// Move the context of Precis execution to next stage (i.e) stage 2.
 		o.inputObject.moveToNextStage();

@@ -21,7 +21,7 @@ public class MetricsPrecisMain extends PrecisProcessor {
 		ps[0] = new PrecisSchemaProcessor(new PrecisFileStream(PrecisConfigProperties.INPUT_SCHEMA_FILE,
 				PrecisConfigProperties.SCHEMA_RECORD_SEPERATOR));
 		ps[1] = new PrecisInputCharacteristicsProcessor(new PrecisFileStream(PrecisConfigProperties.INPUT_DATA_FILE));
-		ps[2] = new DimValIndex(PrecisConfigProperties.THRESHOLD);
+		ps[2] = new DimValIndex();
 		ps[3] = new BitSetFeedV2(new PrecisFileStream(PrecisConfigProperties.INPUT_DATA_FILE));
 		ps[4] = new CandidateGeneratorStage2V2();
 		for (int i = 3; i <= PrecisConfigProperties.NO_OF_STAGES; i++) {
