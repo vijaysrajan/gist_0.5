@@ -1,0 +1,10 @@
+Requirements to be updated in this Clean up - CleanUp-210710
+============================================================
+
+1) Donot join certain fields which has lt or gt relationship.
+2) Configure precis until level 3 as threshold 1
+3) Handle percentage thresholds.
+4) Handle different thresholds at different levels post level 3.
+    Fixed - 3% support threshold post level 3
+    Linear - 1% at level 4, 2% at level 5, 3% at level 6, 4% at level 7 and fixed at 5% thereon.
+    Exponential - 1% at level 4, 2% at level 5, 4% at level 6, 8% at level 7 and fixed at 8% thereon.
