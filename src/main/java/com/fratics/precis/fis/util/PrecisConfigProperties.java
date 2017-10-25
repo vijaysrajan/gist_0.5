@@ -1,9 +1,9 @@
 package com.fratics.precis.fis.util;
 
+import com.fratics.precis.util.ConfigObject;
+
 import java.util.Arrays;
 import java.util.HashSet;
-
-import com.fratics.precis.util.ConfigObject;
 
 public class PrecisConfigProperties {
 
@@ -28,8 +28,9 @@ public class PrecisConfigProperties {
 	public static boolean DUMP_DIM_FEED = false;
 	public static boolean DUMP_BITSET_FEED = false;
 	public static HashSet<String> IGN_WORDS = new HashSet<String>(Arrays.asList("null", "", "0"));
-	public static boolean HIERARCHY_FIELDS_ENABLED = false;
-	public static boolean USE_THRESHOLD_GEN = false;
+    public static boolean HIERARCHY_DIMS_ENABLED = false;
+    public static String HIERARCHY_DIM_GROUPS = null;
+    public static boolean USE_THRESHOLD_GEN = false;
     public static boolean USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3 = false;
     public static double THRESHOLD_UPTO_LEVEL_3 = 1;
     public static boolean USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3 = false;
@@ -163,9 +164,14 @@ public class PrecisConfigProperties {
 			IGN_WORDS = new HashSet<String>(Arrays.asList(tmp.split(",")));
 		}
 
-        tmp = c.getProperties().getProperty("HIERARCHY_FIELDS_ENABLED");
+        tmp = c.getProperties().getProperty("HIERARCHY_DIMS_ENABLED");
         if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
-            HIERARCHY_FIELDS_ENABLED = Boolean.parseBoolean(tmp);
+            HIERARCHY_DIMS_ENABLED = Boolean.parseBoolean(tmp);
+        }
+
+        tmp = c.getProperties().getProperty("HIERARCHY_DIM_GROUPS");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            HIERARCHY_DIM_GROUPS = tmp;
         }
 
         tmp = c.getProperties().getProperty("USE_THRESHOLD_GEN");

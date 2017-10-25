@@ -70,20 +70,17 @@ public class BitSetFeedV2 extends PrecisProcessor {
 			BaseFeedElement e = new BaseFeedElement(DimValIndexBase.getPrecisBitSetLength());
 			elementAddedflag = false;
 			metricGenerated = false;
-			metric = 0.0;
+            //Current Line's Metric Value
+			metric = Double.parseDouble(str[o.inputObject.getMetricIndex()]);
+            //Generate total metric Values
+            if(metricPrecis) totalMetricValue = totalMetricValue + metric;
+
 			for (int i = 0; i < fi.length; i++) {
 
 				// Create the keys from input feed to check in DimValIndex.
 				String tmpDim = fi[i].getSchemaElement().fieldName;
 				String tmpDimVal = fi[i].getSchemaElement().fieldName + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR
 						+ str[fi[i].getSchemaElement().fieldIndex];
-
-
-                //Generate Current Line Metric
-                metric = Double.parseDouble(str[o.inputObject.getMetricIndex()]);
-
-                //Generate total metric Values
-                if(metricPrecis) totalMetricValue = totalMetricValue + metric;
 
 				// Checks if the value is present in DimValindex.
 				if (DimValIndex.dimMap.containsKey(tmpDim)) {

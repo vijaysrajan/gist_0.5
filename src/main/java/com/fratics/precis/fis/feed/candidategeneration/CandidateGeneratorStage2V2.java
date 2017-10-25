@@ -33,6 +33,7 @@ public class CandidateGeneratorStage2V2 extends PrecisProcessor {
 		// System.err.println(Arrays.toString(it));
 		for (int i = 0; i < it.length; i++) {
 			for (int j = i + 1; j < it.length; j++) {
+				if(hierarchyDimsNegation.checkIfBelongToSameHierarchyGroup(it[i],it[j])) continue;
 				if (it[i].xor(it[j]).cardinality() == 4) {
 					BitSet b = it[i].or(it[j]);
 					o.inputObject.addCandidate(b);

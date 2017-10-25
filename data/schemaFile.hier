@@ -1,0 +1,21 @@
+#
+# Input Schema File Definition.
+# Colon (:) Separated Schema File.
+# Every Record in a Column of the input data feed has to defined as follows:-
+# 1) DIM_NAME
+# 2) DIM_TYPE - "d" for dimension & "m" for metric
+# 3) DIM_DATA_TYPE - Basic Java Data Types.
+# 4) INCLUDED_FOR_PRECIS_CALCULATION - "t" for true & "f" for false.
+#
+spaceId:d:string:t
+bucket:d:string:t
+browser:d:string:t
+netspeedType:d:string:t
+os:d:string:t
+deviceType:d:string:t
+country:d:string:t
+lt10:d:string:t
+lt50:d:string:t
+lt75:d:string:t
+gt75:d:string:t
+beacon:m:double:t
