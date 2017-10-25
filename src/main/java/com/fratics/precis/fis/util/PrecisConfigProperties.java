@@ -18,6 +18,7 @@ public class PrecisConfigProperties {
 	public static String OUPUT_CANDIDATE_FILE_PATTERN = "stage_${stage_number}_candidate_file.txt";
 	public static boolean IS_COUNT_PRECIS = false;
 	public static boolean GENERATE_RAW_CANDIDATE_FILE = false;
+	public static String COUNT_PRECIS_METRIC_NAME = "count";
 	public static double THRESHOLD = 36000;
 	public static String OUTPUT_DIMVAL_SEPERATOR = Character.toString('\002');
 	public static String OUPUT_RAW_CANDIDATE_FILE_PATTERN = "stage_${stage_number}_raw_candidate_file.txt";
@@ -66,6 +67,10 @@ public class PrecisConfigProperties {
 			OUTPUT_DIR = tmp;
 		}
 
+        tmp = c.getProperties().getProperty("COUNT_PRECIS_METRIC_NAME");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            COUNT_PRECIS_METRIC_NAME = tmp;
+        }
 		tmp = c.getProperties().getProperty("INPUT_RECORD_SEPERATOR");
 		if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
 			String s = convertSpecialChar(tmp);

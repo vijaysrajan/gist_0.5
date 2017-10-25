@@ -62,7 +62,7 @@ public class BitSetFeedV2 extends PrecisProcessor {
 		boolean elementAddedflag = false;
 		boolean metricGenerated = false;
 		double metric = 0.0;
-		double totalMetricValue = 0.0;
+		double totalMetric = 0.0;
 		long lineNumber = 0;
 		// read the input stream object
 		while ((str = ps.readStream()) != null) {
@@ -70,10 +70,8 @@ public class BitSetFeedV2 extends PrecisProcessor {
 			BaseFeedElement e = new BaseFeedElement(DimValIndexBase.getPrecisBitSetLength());
 			elementAddedflag = false;
 			metricGenerated = false;
-            //Current Line's Metric Value
-			metric = Double.parseDouble(str[o.inputObject.getMetricIndex()]);
-            //Generate total metric Values
-            if(metricPrecis) totalMetricValue = totalMetricValue + metric;
+			metric = 0.0;
+			totalMetric += Double.parseDouble(str[o.inputObject.getMetricIndex()]);
 
 			for (int i = 0; i < fi.length; i++) {
 
@@ -93,6 +91,7 @@ public class BitSetFeedV2 extends PrecisProcessor {
 						elementAddedflag = true;
 						if (metricPrecis && !metricGenerated) {
 							metricGenerated = true;
+							metric = Double.parseDouble(str[o.inputObject.getMetricIndex()]);
 							e.setMetric(metric);
 						}
 						if (!metricPrecis && !metricGenerated) {
@@ -118,16 +117,16 @@ public class BitSetFeedV2 extends PrecisProcessor {
 			}
 		}
 
-		//o.inputObject.dataFeedTrie.print();
-        //set the total metric Values.
+		// o.inputObject.dataFeedTrie.print();
         if(metricPrecis)
-            thresholdCalculator.setTotalValue(totalMetricValue);
-		else
-		    thresholdCalculator.setTotalValue(lineNumber);
+            thresholdCalculator.setTotalValue(totalMetric);
+		else {
+            thresholdCalculator.setTotalValue(lineNumber);
+            o.inputObject.setMetricName(PrecisConfigProperties.COUNT_PRECIS_METRIC_NAME);
+        }
 		// Dump the contents of partitioner as a file.
 		// if (PrecisConfigProperties.DUMP_BITSET_FEED) partitioner.dump();
 		// Dump the contents of First Stage Candidates.
-
 		Util.dump(1, o);
 		// Move the context of Precis execution to next stage (i.e) stage 2.
 		o.inputObject.moveToNextStage();
