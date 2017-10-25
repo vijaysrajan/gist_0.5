@@ -83,10 +83,7 @@ public class BitSetFeedV2 extends PrecisProcessor {
                 metric = Double.parseDouble(str[o.inputObject.getMetricIndex()]);
 
                 //Generate total metric Values
-                if(!metricPrecis)
-                    totalMetricValue++;
-                else
-                    totalMetricValue = totalMetricValue + metric;
+                if(metricPrecis) totalMetricValue = totalMetricValue + metric;
 
 				// Checks if the value is present in DimValindex.
 				if (DimValIndex.dimMap.containsKey(tmpDim)) {
@@ -126,7 +123,10 @@ public class BitSetFeedV2 extends PrecisProcessor {
 
 		//o.inputObject.dataFeedTrie.print();
         //set the total metric Values.
-        thresholdCalculator.setTotalValue(totalMetricValue);
+        if(metricPrecis)
+            thresholdCalculator.setTotalValue(totalMetricValue);
+		else
+		    thresholdCalculator.setTotalValue(lineNumber);
 		// Dump the contents of partitioner as a file.
 		// if (PrecisConfigProperties.DUMP_BITSET_FEED) partitioner.dump();
 		// Dump the contents of First Stage Candidates.
