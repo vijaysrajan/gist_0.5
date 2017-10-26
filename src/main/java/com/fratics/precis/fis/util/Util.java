@@ -1,11 +1,11 @@
 package com.fratics.precis.fis.util;
 
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-
 import com.fratics.precis.fis.base.BaseCandidateElement;
 import com.fratics.precis.fis.base.ValueObject;
 import com.fratics.precis.fis.feed.dimval.DimValIndex;
+
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
 
 public class Util {
 
@@ -25,7 +25,7 @@ public class Util {
 		int startIndex = 0;
 		int val = 0;
 		int index = stage;
-		// System.err.println(bce);
+		// logger.info(bce);
 		BitSet b = bce.getBitSet();
 		index = stage;
 		val = 0;

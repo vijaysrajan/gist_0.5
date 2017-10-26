@@ -1,13 +1,15 @@
 package com.fratics.precis.fis.threshold;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import com.fratics.precis.fis.base.MutableDouble;
 import com.fratics.precis.fis.base.PrecisProcessor;
 import com.fratics.precis.fis.base.ValueObject;
+import com.fratics.precis.util.Logger;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class ThresholdProcessor extends PrecisProcessor {
+	private Logger logger = Logger.getInstance();
 
 	public boolean process(ValueObject vo) throws Exception {
 		MutableDouble[] mb = new MutableDouble[0];
@@ -18,14 +20,14 @@ public class ThresholdProcessor extends PrecisProcessor {
 		for (MutableDouble s : c) {
 			double value = s.get();
 			double tmp = Math.sqrt(Math.pow(i, 2) + Math.pow(value, 2));
-			System.err.println("i = " + i + " value = " + value + " distance = " + tmp);
+			logger.info("i = " + i + " value = " + value + " distance = " + tmp);
 			if (tmp < threshold.threshold) {
 				threshold.threshold = tmp;
 				threshold.value = value;
 			}
 			i++;
 		}
-		System.err.println("Threshold Value ::" + threshold);
+		logger.info("Threshold Value ::" + threshold);
 		return true;
 	}
 

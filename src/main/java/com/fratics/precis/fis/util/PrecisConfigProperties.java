@@ -36,6 +36,8 @@ public class PrecisConfigProperties {
     public static double THRESHOLD_UPTO_LEVEL_3 = 1;
     public static boolean USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3 = false;
     public static String THRESHOLD_GEN_FORMULA_AFTER_LEVEL_3 ="4:1,5:2,6:3,7:4,8:5";
+    public static boolean LOGGING_ENABLED = true;
+    public static String LOGGING_LEVEL = "INFO";
 
 
 	private static String convertSpecialChar(String s) {
@@ -204,6 +206,16 @@ public class PrecisConfigProperties {
         if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
             USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3 = Boolean.parseBoolean(tmp);
         }
-	}
+
+        tmp = c.getProperties().getProperty("LOGGING_LEVEL");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            LOGGING_LEVEL = tmp;
+        }
+
+        tmp = c.getProperties().getProperty("LOGGING_ENABLED");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            LOGGING_ENABLED = Boolean.parseBoolean(tmp);
+        }
+    }
 
 }

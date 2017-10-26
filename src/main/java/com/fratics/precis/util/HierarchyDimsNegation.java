@@ -13,6 +13,9 @@ public class HierarchyDimsNegation extends PrecisBase {
     private static HierarchyDimsNegation hierarchyDimsNegation;
     private ArrayList<HashSet<String>> hierarchyDimSets = new ArrayList<HashSet<String>>();
 
+    private HierarchyDimsNegation() {
+    }
+
     public static HierarchyDimsNegation getInstance() {
         if (hierarchyDimsNegation == null) {
             hierarchyDimsNegation = new HierarchyDimsNegation();

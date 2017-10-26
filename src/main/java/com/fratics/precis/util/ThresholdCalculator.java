@@ -7,6 +7,10 @@ public class ThresholdCalculator extends PrecisBase {
     private static ThresholdCalculator thresholdCalculator;
     private double totalValue = 0;
     private double thresholdValues[] = new double[256]; //Max 255, ignore 0th slot
+    private Logger logger = Logger.getInstance();
+
+    private ThresholdCalculator() {
+    }
 
     private void loadThresholds(String formulae){
         //4:1,5:2,6:3,7:4,8:5
@@ -43,9 +47,22 @@ public class ThresholdCalculator extends PrecisBase {
         return totalValue;
     }
 
-    public void setTotalValue(double totalValue) {
-        System.err.println("Total Metric Value for Calculation of Threshold ::" +  totalValue);
-        this.totalValue = totalValue;
+    public static void main(String [] args) throws Exception{
+        PrecisConfigProperties.init();
+        ThresholdCalculator  thresholdCalculator = ThresholdCalculator.getInstance();
+        thresholdCalculator.initialize();
+        Logger logger = Logger.getInstance();
+        logger.initialize();
+        thresholdCalculator.setTotalValue(100000);
+        logger.info("" + thresholdCalculator.getThresholdValue(1));
+        logger.info("" + thresholdCalculator.getThresholdValue(2));
+        logger.info("" + thresholdCalculator.getThresholdValue(3));
+        logger.info("" + thresholdCalculator.getThresholdValue(4));
+        logger.info("" + thresholdCalculator.getThresholdValue(5));
+        logger.info("" + thresholdCalculator.getThresholdValue(6));
+        logger.info("" + thresholdCalculator.getThresholdValue(7));
+        logger.info("" + thresholdCalculator.getThresholdValue(8));
+        logger.info("" + thresholdCalculator.getThresholdValue(9));
     }
 
     public static ThresholdCalculator getInstance() {
@@ -55,9 +72,14 @@ public class ThresholdCalculator extends PrecisBase {
         return thresholdCalculator;
     }
 
+    public void setTotalValue(double totalValue) {
+        logger.info("Total Metric Value for Calculation of Threshold ::" + totalValue);
+        this.totalValue = totalValue;
+    }
+
     public double getThresholdValue(int currentStage){
         double value = getThreshold(currentStage);
-        System.err.println("Threshold for Stage " + currentStage + " is " + value);
+        logger.info("Threshold for Stage " + currentStage + " is " + value);
         return value;
     }
 
@@ -73,27 +95,11 @@ public class ThresholdCalculator extends PrecisBase {
             }
         }else{
             if(PrecisConfigProperties.USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3){
-                //System.err.println("1:" + thresholdValues[currentStage] + " 2: " + totalValue);
+                //logger.info("1:" + thresholdValues[currentStage] + " 2: " + totalValue);
                 return (thresholdValues[currentStage] * totalValue / 100);
             }else{
                 return thresholdValues[currentStage];
             }
         }
-    }
-
-    public static void main(String [] args) throws Exception{
-        PrecisConfigProperties.init();
-        ThresholdCalculator  thresholdCalculator = ThresholdCalculator.getInstance();
-        thresholdCalculator.initialize();
-        thresholdCalculator.setTotalValue(100000);
-        System.err.println(thresholdCalculator.getThresholdValue(1));
-        System.err.println(thresholdCalculator.getThresholdValue(2));
-        System.err.println(thresholdCalculator.getThresholdValue(3));
-        System.err.println(thresholdCalculator.getThresholdValue(4));
-        System.err.println(thresholdCalculator.getThresholdValue(5));
-        System.err.println(thresholdCalculator.getThresholdValue(6));
-        System.err.println(thresholdCalculator.getThresholdValue(7));
-        System.err.println(thresholdCalculator.getThresholdValue(8));
-        System.err.println(thresholdCalculator.getThresholdValue(9));
     }
 }

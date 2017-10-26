@@ -1,11 +1,6 @@
 package com.fratics.precis.fis.feed;
 
-import com.fratics.precis.fis.base.BaseCandidateElement;
-import com.fratics.precis.fis.base.BaseFeedElement;
-import com.fratics.precis.fis.base.FieldObject;
-import com.fratics.precis.fis.base.PrecisProcessor;
-import com.fratics.precis.fis.base.PrecisStream;
-import com.fratics.precis.fis.base.ValueObject;
+import com.fratics.precis.fis.base.*;
 import com.fratics.precis.fis.feed.dimval.DimValIndex;
 import com.fratics.precis.fis.feed.dimval.DimValIndexBase;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
@@ -104,7 +99,7 @@ public class BitSetFeed extends PrecisProcessor {
 			}
 			// add the element to the respective partition.
 			if (elementAddedflag) {
-				// System.err.println(e);
+				// logger.info(e);
 				partitioner.addElement(e.getNumberofDimVals() - 1, e);
 			}
 		}

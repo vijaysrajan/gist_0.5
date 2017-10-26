@@ -1,11 +1,11 @@
 package com.fratics.precis.fis.feed;
 
+import com.fratics.precis.fis.base.BaseFeedElement;
+import com.fratics.precis.fis.util.PrecisConfigProperties;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-
-import com.fratics.precis.fis.base.BaseFeedElement;
-import com.fratics.precis.fis.util.PrecisConfigProperties;
 
 /*
  * The input data feed is removed of all the values that were below threshold.
@@ -113,7 +113,7 @@ public class BaseFeedPartitioner {
 		// Returns the next available base feed element from the
 		// partition object.
 		public BaseFeedElement getNext() {
-			// System.err.println("Current Index ::" + this.currentIndex +
+			// logger.info("Current Index ::" + this.currentIndex +
 			// " Current Stage ::" + this.currentStage);
 			BaseFeedElement e = partitionMap[this.currentStage].get(currentIndex);
 			this.currentIndex++;

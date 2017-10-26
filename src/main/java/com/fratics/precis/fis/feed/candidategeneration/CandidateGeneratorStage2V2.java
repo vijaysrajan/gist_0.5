@@ -6,6 +6,7 @@ import com.fratics.precis.fis.base.ValueObject;
 import com.fratics.precis.fis.util.BitSet;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.fis.util.Util;
+import com.fratics.precis.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +24,7 @@ import java.util.Date;
 public class CandidateGeneratorStage2V2 extends PrecisProcessor {
 	private int currStage = 2;
 	private ValueObject o;
+	private Logger logger = Logger.getInstance();
 
 	public CandidateGeneratorStage2V2() {
 	}
@@ -31,7 +33,7 @@ public class CandidateGeneratorStage2V2 extends PrecisProcessor {
 	// generate the 2nd Stage potential candidates.
 	private void crossProduct() {
 		BaseCandidateElement[] it = o.inputObject.firstStageCandidates.values().toArray(new BaseCandidateElement[0]);
-		// System.err.println(Arrays.toString(it));
+		// logger.info(Arrays.toString(it));
 		for (int i = 0; i < it.length; i++) {
 			for (int j = i + 1; j < it.length; j++) {
 				if (PrecisConfigProperties.HIERARCHY_DIMS_ENABLED && hierarchyDimsNegation.checkIfBelongToSameHierarchyGroup(it[i], it[j]))
@@ -47,16 +49,16 @@ public class CandidateGeneratorStage2V2 extends PrecisProcessor {
 	public boolean process(ValueObject o) throws Exception {
 		this.o = o;
 		o.inputObject.currentStage = currStage;
-		System.err.println("Current Stage ::" + this.currStage);
-		System.err.println(
+		logger.info("Current Stage ::" + this.currStage);
+		logger.info(
 				"No of Candidates from Previous Stage ::" + o.inputObject.firstStageCandidates.values().size());
 
 		// Generate Cross Product
 		long milliSec1 = new Date().getTime();
 		crossProduct();
 		long milliSec2 = new Date().getTime();
-		System.err.println("No of Candidates Before Applying Threshold::" + o.inputObject.currCandidateSet.size());
-		System.err.println("Time taken in MilliSec for Candidate Gen ::" + (milliSec2 - milliSec1));
+		logger.info("No of Candidates Before Applying Threshold::" + o.inputObject.currCandidateSet.size());
+		logger.info("Time taken in MilliSec for Candidate Gen ::" + (milliSec2 - milliSec1));
 		milliSec1 = new Date().getTime();
 
 		// o.inputObject.dataFeedTrie.print();
@@ -72,8 +74,8 @@ public class CandidateGeneratorStage2V2 extends PrecisProcessor {
 		o.inputObject.setThreshold(thresholdCalculator.getThresholdValue(o.inputObject.currentStage));
 		boolean ret = o.inputObject.applyThreshold();
 		milliSec2 = new Date().getTime();
-		System.err.println("No of Candidates After Applying Threshold::" + o.inputObject.currCandidateSet.size());
-		System.err.println("Time taken in MilliSec for Applying Threshold ::" + (milliSec2 - milliSec1));
+		logger.info("No of Candidates After Applying Threshold::" + o.inputObject.currCandidateSet.size());
+		logger.info("Time taken in MilliSec for Applying Threshold ::" + (milliSec2 - milliSec1));
 		// Dump the Candidate Stage.
 		if (ret)
 			Util.dump(this.currStage, o);

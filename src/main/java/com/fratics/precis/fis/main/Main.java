@@ -1,13 +1,14 @@
 package com.fratics.precis.fis.main;
 
+import java.io.File;
+
 import com.fratics.precis.fis.main.count.CountPrecisMain;
 import com.fratics.precis.fis.main.metrics.MetricsPrecisMain;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.util.ConfigObject;
 import com.fratics.precis.util.HierarchyDimsNegation;
+import com.fratics.precis.util.Logger;
 import com.fratics.precis.util.ThresholdCalculator;
-
-import java.io.File;
 
 /*
  * Main Driver for Precis Application Engine.
@@ -50,6 +51,12 @@ public class Main {
                 HierarchyDimsNegation hierarchyDimsNegation = HierarchyDimsNegation.getInstance();
                 hierarchyDimsNegation.initialize();
             }
+            //Logging Init
+            if(PrecisConfigProperties.LOGGING_ENABLED){
+                Logger logger = Logger.getInstance();
+                logger.initialize();
+            }
+
             // Verify, its either a count precis (or) metrics precis.
 			// and launch the desired Precis.
 			if (PrecisConfigProperties.IS_COUNT_PRECIS) {

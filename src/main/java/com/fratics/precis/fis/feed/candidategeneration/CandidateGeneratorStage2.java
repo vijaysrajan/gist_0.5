@@ -1,7 +1,5 @@
 package com.fratics.precis.fis.feed.candidategeneration;
 
-import java.util.ArrayList;
-
 import com.fratics.precis.fis.base.BaseCandidateElement;
 import com.fratics.precis.fis.base.BaseFeedElement;
 import com.fratics.precis.fis.base.PrecisProcessor;
@@ -10,6 +8,9 @@ import com.fratics.precis.fis.feed.BaseFeedPartitioner;
 import com.fratics.precis.fis.feed.BaseFeedPartitioner.BaseFeedPartitionerReader;
 import com.fratics.precis.fis.util.BitSet;
 import com.fratics.precis.fis.util.Util;
+import com.fratics.precis.util.Logger;
+
+import java.util.ArrayList;
 
 /*
  * This is the Second stage Candidate Generator. This is developed as a flow processor.
@@ -24,6 +25,7 @@ import com.fratics.precis.fis.util.Util;
 public class CandidateGeneratorStage2 extends PrecisProcessor {
 	private int currStage = 2;
 	private ValueObject o;
+	private Logger logger = Logger.getInstance();
 
 	public CandidateGeneratorStage2() {
 	}
@@ -46,8 +48,8 @@ public class CandidateGeneratorStage2 extends PrecisProcessor {
 		this.o = o;
 		o.inputObject.currentStage = currStage;
 		BaseFeedPartitioner bp = o.inputObject.getPartitioner();
-		System.err.println("Current Stage ::" + this.currStage);
-		System.err.println(
+		logger.info("Current Stage ::" + this.currStage);
+		logger.info(
 				"No of Candidates from Previous Stage ::" + o.inputObject.firstStageCandidates.values().size());
 
 		// Initialize Reader
@@ -55,7 +57,7 @@ public class CandidateGeneratorStage2 extends PrecisProcessor {
 
 		// Generate Cross Product
 		crossProduct();
-		System.err.println("No of Candidates Before Applying Threshold::" + o.inputObject.currCandidateSet.size());
+		logger.info("No of Candidates Before Applying Threshold::" + o.inputObject.currCandidateSet.size());
 		BaseFeedPartitionerReader bpr = bp.getReader();
 		boolean countPrecis = o.inputObject.isCountPrecis();
 
@@ -64,7 +66,7 @@ public class CandidateGeneratorStage2 extends PrecisProcessor {
 		// to the candidates.
 		while (bpr.hasNext()) {
 			BaseFeedElement be = bpr.getNext();
-			// System.err.println(be);
+			// logger.info(be);
 			for (ArrayList<BaseCandidateElement> al : o.inputObject.currCandidatePart.values()) {
 				for (BaseCandidateElement bce : al) {
 					if (bce.and(be.getBitSet()).equals(bce.getBitSet())) {
@@ -80,7 +82,7 @@ public class CandidateGeneratorStage2 extends PrecisProcessor {
 
 		// Apply the threshold handler.
 		boolean ret = o.inputObject.applyThreshold();
-		System.err.println("No of Candidates After Applying Threshold::" + o.inputObject.currCandidateSet.size());
+		logger.info("No of Candidates After Applying Threshold::" + o.inputObject.currCandidateSet.size());
 
 		// Dump the Candidate Stage.
 		if (ret)

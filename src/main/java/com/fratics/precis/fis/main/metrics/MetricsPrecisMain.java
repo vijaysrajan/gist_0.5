@@ -10,10 +10,12 @@ import com.fratics.precis.fis.schema.PrecisSchemaProcessor;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.reader.PrecisFileStream;
 import com.fratics.precis.reader.PrecisInputCharacteristicsProcessor;
+import com.fratics.precis.util.Logger;
 
 public class MetricsPrecisMain extends PrecisProcessor {
 
 	private PrecisProcessor[] ps = null;
+	private Logger logger = Logger.getInstance();
 
 	public MetricsPrecisMain() {
 		// Atleast 2 stages will be run, even if the configuration is less.
@@ -64,7 +66,7 @@ public class MetricsPrecisMain extends PrecisProcessor {
 		// Object
 		boolean successFlag = true;
 		for (int i = 0; i < ps.length && successFlag; i++) {
-			System.err.println("Executing Handler :: " + ps[i].getClass().getName());
+			logger.info("Executing Handler :: " + ps[i].getClass().getName());
 			successFlag = ps[i].process(o);
 		}
 		return true;

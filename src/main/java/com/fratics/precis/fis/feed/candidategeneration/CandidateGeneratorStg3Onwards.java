@@ -1,10 +1,5 @@
 package com.fratics.precis.fis.feed.candidategeneration;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import com.fratics.precis.fis.base.BaseCandidateElement;
 import com.fratics.precis.fis.base.BaseFeedElement;
 import com.fratics.precis.fis.base.PrecisProcessor;
@@ -14,6 +9,12 @@ import com.fratics.precis.fis.feed.BaseFeedPartitioner.BaseFeedPartitionerReader
 import com.fratics.precis.fis.feed.dimval.DimValIndex;
 import com.fratics.precis.fis.util.BitSet;
 import com.fratics.precis.fis.util.Util;
+import com.fratics.precis.util.Logger;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /*
  * This is the Candidate Generator from 3rd Stage Onwards. This is developed as a flow processor.
@@ -31,6 +32,7 @@ public class CandidateGeneratorStg3Onwards extends PrecisProcessor {
 	private ValueObject o;
 	private HashMap<BitSet, ArrayList<BaseCandidateElement>> cdParttion;
 	private HashSet<BitSet> cdSet;
+	private Logger logger = Logger.getInstance();
 
 	public CandidateGeneratorStg3Onwards(int stage) {
 		this.currStage = stage;
@@ -106,8 +108,8 @@ public class CandidateGeneratorStg3Onwards extends PrecisProcessor {
 		cdSet = o.inputObject.prevCandidateSet;
 		o.inputObject.currentStage = currStage;
 		BaseFeedPartitioner bp = o.inputObject.getPartitioner();
-		System.err.println("Current Stage ::" + this.currStage);
-		System.err.println("No of Candidates from Previous Stage ::" + o.inputObject.prevCandidateSet.size());
+		logger.info("Current Stage ::" + this.currStage);
+		logger.info("No of Candidates from Previous Stage ::" + o.inputObject.prevCandidateSet.size());
 
 		// Initialize Reader
 		bp.initReader(this.currStage);
@@ -116,8 +118,8 @@ public class CandidateGeneratorStg3Onwards extends PrecisProcessor {
 		long milliSec1 = new Date().getTime();
 		crossProduct();
 		long milliSec2 = new Date().getTime();
-		System.err.println("No of Candidates Before Applying Threshold::" + o.inputObject.currCandidateSet.size());
-		System.err.println("Time taken in MilliSec for Candidate Gen ::" + (milliSec2 - milliSec1));
+		logger.info("No of Candidates Before Applying Threshold::" + o.inputObject.currCandidateSet.size());
+		logger.info("Time taken in MilliSec for Candidate Gen ::" + (milliSec2 - milliSec1));
 
 		BaseFeedPartitionerReader bpr = bp.getReader();
 		boolean countPrecis = o.inputObject.isCountPrecis();
@@ -127,7 +129,7 @@ public class CandidateGeneratorStg3Onwards extends PrecisProcessor {
 		// to the candidates.
 		while (bpr.hasNext()) {
 			BaseFeedElement be = bpr.getNext();
-			// System.err.println(be);
+			// logger.info(be);
 			for (ArrayList<BaseCandidateElement> al : o.inputObject.currCandidatePart.values()) {
 				for (BaseCandidateElement bce : al) {
 					if (bce.and(be.getBitSet()).equals(bce.getBitSet())) {
@@ -144,8 +146,8 @@ public class CandidateGeneratorStg3Onwards extends PrecisProcessor {
 		// Apply the threshold handler.
 		boolean ret = o.inputObject.applyThreshold();
 		milliSec2 = new Date().getTime();
-		System.err.println("No of Candidates After Applying Threshold::" + o.inputObject.currCandidateSet.size());
-		System.err.println("Time taken in MilliSec for Applying Threshold ::" + (milliSec2 - milliSec1));
+		logger.info("No of Candidates After Applying Threshold::" + o.inputObject.currCandidateSet.size());
+		logger.info("Time taken in MilliSec for Applying Threshold ::" + (milliSec2 - milliSec1));
 		// Dump the Candidate Stage.
 		if (ret)
 			Util.dump(this.currStage, o);

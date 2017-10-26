@@ -27,7 +27,7 @@ public class PrecisInputCharacteristicsProcessor extends PrecisProcessor {
 		}
 		// Set the Number of Lines as Well.
 		o.inputObject.setNoOfLines(ps.getNoOfLines());
-		// System.err.println(Arrays.toString(o.inputObject.getFieldObjects()));
+		// logger.info(Arrays.toString(o.inputObject.getFieldObjects()));
 		return true;
 	}
 }
