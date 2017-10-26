@@ -19,9 +19,10 @@ import com.fratics.precis.util.ThresholdCalculator;
 
 public abstract class PrecisProcessor extends PrecisBase {
 
-	protected ThresholdCalculator thresholdCalculator = ThresholdCalculator.getInstance();
-	protected HierarchyDimsNegation hierarchyDimsNegation = HierarchyDimsNegation.getInstance();
-	// The functionality provided is defined by the overridden process() method
-	// in the derived class.
-	public abstract boolean process(ValueObject o) throws Exception;
+    protected ThresholdCalculator thresholdCalculator = ThresholdCalculator.getInstance();
+    protected HierarchyDimsNegation hierarchyDimsNegation = HierarchyDimsNegation.getInstance();
+
+    // The functionality provided is defined by the overridden process() method
+    // in the derived class.
+    public abstract boolean process(ValueObject o) throws Exception;
 }

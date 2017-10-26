@@ -8,32 +8,32 @@ package com.fratics.precis.fis.base;
  */
 
 public class MutableInt implements Comparable<MutableInt> {
-	int value = 1;
+    int value = 1;
 
-	public MutableInt() {
-	}
+    public MutableInt() {
+    }
 
-	public MutableInt(int val) {
-		value = val;
-	}
+    public MutableInt(int val) {
+        value = val;
+    }
 
-	public void inc() {
-		++value;
-	}
+    public void inc() {
+        ++value;
+    }
 
-	public void incBy(int inc) {
-		value += inc;
-	}
+    public void incBy(int inc) {
+        value += inc;
+    }
 
-	public int get() {
-		return value;
-	}
+    public int get() {
+        return value;
+    }
 
-	public String toString() {
-		return "" + value;
-	}
+    public String toString() {
+        return "" + value;
+    }
 
-	public int compareTo(MutableInt o) {
-		return this.value - o.value;
-	}
+    public int compareTo(MutableInt o) {
+        return this.value - o.value;
+    }
 }
