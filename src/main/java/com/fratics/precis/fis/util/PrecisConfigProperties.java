@@ -32,7 +32,7 @@ public class PrecisConfigProperties {
     public static boolean HIERARCHY_DIMS_ENABLED = false;
     public static String HIERARCHY_DIM_GROUPS = null;
     public static boolean USE_THRESHOLD_GEN = false;
-    public static boolean USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3 = false;
+    public static boolean USE_THRESHOLD_PERCENTAGE_AFTER_LEVEL_3 = false;
     public static double THRESHOLD_UPTO_LEVEL_3 = 1;
     public static boolean USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3 = false;
     public static String THRESHOLD_GEN_FORMULA_AFTER_LEVEL_3 = "4:1,5:2,6:3,7:4,8:5";
@@ -187,9 +187,9 @@ public class PrecisConfigProperties {
         }
 
 
-        tmp = c.getProperties().getProperty("USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3");
+        tmp = c.getProperties().getProperty("USE_THRESHOLD_PERCENTAGE_AFTER_LEVEL_3");
         if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
-            USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3 = Boolean.parseBoolean(tmp);
+            USE_THRESHOLD_PERCENTAGE_AFTER_LEVEL_3 = Boolean.parseBoolean(tmp);
         }
 
         tmp = c.getProperties().getProperty("THRESHOLD_UPTO_LEVEL_3");

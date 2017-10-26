@@ -17,5 +17,5 @@ country:d:string:t
 lt10:d:string:t
 lt50:d:string:t
 lt75:d:string:t
-gt75:d:string:t
+lt100:d:string:t
 beacon:m:double:t

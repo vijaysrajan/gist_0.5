@@ -66,7 +66,7 @@ public class BitSetFeedV2 extends PrecisProcessor {
             elementAddedflag = false;
             metricGenerated = false;
             metric = 0.0;
-            totalMetric += Double.parseDouble(str[o.inputObject.getMetricIndex()]);
+            if(metricPrecis) totalMetric += Double.parseDouble(str[o.inputObject.getMetricIndex()]);
 
             for (int i = 0; i < fi.length; i++) {
 
