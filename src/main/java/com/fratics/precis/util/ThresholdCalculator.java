@@ -88,15 +88,19 @@ public class ThresholdCalculator extends PrecisBase {
         if (currentStage <= 3) {
             if (PrecisConfigProperties.USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3) {
                 //generate percentage.
+                logger.info("Threshold Percentage Applied ::" + PrecisConfigProperties.THRESHOLD_UPTO_LEVEL_3 + "%");
                 return (PrecisConfigProperties.THRESHOLD_UPTO_LEVEL_3 * totalValue / 100);
             } else {
+                logger.info("Threshold Absoulte Value Applied ::" + PrecisConfigProperties.THRESHOLD_UPTO_LEVEL_3);
                 return PrecisConfigProperties.THRESHOLD_UPTO_LEVEL_3;
             }
         } else {
             if (PrecisConfigProperties.USE_THRESHOLE_PERCENTAGE_AFTER_LEVEL_3) {
                 //logger.info("1:" + thresholdValues[currentStage] + " 2: " + totalValue);
+                logger.info("Threshold Percentage Applied ::" + thresholdValues[currentStage] + "%");
                 return (thresholdValues[currentStage] * totalValue / 100);
             } else {
+                logger.info("Threshold Absoulte Value Applied ::" + thresholdValues[currentStage]);
                 return thresholdValues[currentStage];
             }
         }
