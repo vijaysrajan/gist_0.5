@@ -1,13 +1,14 @@
 package com.fratics.precis.fis.feed.candidategeneration;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 import com.fratics.precis.fis.base.BaseCandidateElement;
 import com.fratics.precis.fis.base.PrecisProcessor;
 import com.fratics.precis.fis.base.ValueObject;
 import com.fratics.precis.fis.util.BitSet;
+import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.fis.util.Util;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 /*
  * This is the Second stage Candidate Generator. This is developed as a flow processor.
@@ -33,7 +34,8 @@ public class CandidateGeneratorStage2V2 extends PrecisProcessor {
 		// System.err.println(Arrays.toString(it));
 		for (int i = 0; i < it.length; i++) {
 			for (int j = i + 1; j < it.length; j++) {
-				if(hierarchyDimsNegation.checkIfBelongToSameHierarchyGroup(it[i],it[j])) continue;
+				if (PrecisConfigProperties.HIERARCHY_DIMS_ENABLED && hierarchyDimsNegation.checkIfBelongToSameHierarchyGroup(it[i], it[j]))
+					continue;
 				if (it[i].xor(it[j]).cardinality() == 4) {
 					BitSet b = it[i].or(it[j]);
 					o.inputObject.addCandidate(b);

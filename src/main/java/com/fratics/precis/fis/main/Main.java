@@ -1,13 +1,13 @@
 package com.fratics.precis.fis.main;
 
-import java.io.File;
-
 import com.fratics.precis.fis.main.count.CountPrecisMain;
 import com.fratics.precis.fis.main.metrics.MetricsPrecisMain;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.util.ConfigObject;
 import com.fratics.precis.util.HierarchyDimsNegation;
 import com.fratics.precis.util.ThresholdCalculator;
+
+import java.io.File;
 
 /*
  * Main Driver for Precis Application Engine.
@@ -40,14 +40,17 @@ public class Main {
 			PrecisConfigProperties.init();
 
 			//Initialize Threshold calculator
-			ThresholdCalculator thresholdCalculator = ThresholdCalculator.getInstance();
-			thresholdCalculator.initialize();
+            if (PrecisConfigProperties.USE_THRESHOLD_GEN) {
+                ThresholdCalculator thresholdCalculator = ThresholdCalculator.getInstance();
+                thresholdCalculator.initialize();
+            }
 
 			//Initialize Hierarchy Dims Negation.
-            HierarchyDimsNegation hierarchyDimsNegation = HierarchyDimsNegation.getInstance();
-            hierarchyDimsNegation.initialize();
-
-			// Verify, its either a count precis (or) metrics precis.
+            if (PrecisConfigProperties.HIERARCHY_DIMS_ENABLED) {
+                HierarchyDimsNegation hierarchyDimsNegation = HierarchyDimsNegation.getInstance();
+                hierarchyDimsNegation.initialize();
+            }
+            // Verify, its either a count precis (or) metrics precis.
 			// and launch the desired Precis.
 			if (PrecisConfigProperties.IS_COUNT_PRECIS) {
 				CountPrecisMain.run(args);
