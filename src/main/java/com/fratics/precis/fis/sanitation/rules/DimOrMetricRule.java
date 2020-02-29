@@ -1,6 +1,7 @@
 package com.fratics.precis.fis.sanitation.rules;
 
 import com.fratics.precis.fis.base.FieldObject;
+import com.fratics.precis.fis.base.MetricList;
 import com.fratics.precis.fis.base.MutableDouble;
 import com.fratics.precis.fis.base.ValueObject;
 
@@ -13,7 +14,7 @@ public class DimOrMetricRule extends SanitationRuleBase {
         long numOfLines = vo.inputObject.getNoOfLines();
         FieldObject[] fo = vo.inputObject.getFieldObjects();
         for (int i = 0; i < fo.length; i++) {
-            Map<String, MutableDouble> map = fo[i].getMap();
+            Map<String, MetricList> map = fo[i].getMap();
             Iterator<String> it = map.keySet().iterator();
             boolean flag = true;
             while (it.hasNext()) {

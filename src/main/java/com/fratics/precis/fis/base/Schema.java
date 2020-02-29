@@ -12,14 +12,10 @@ public class Schema {
     // List of all the SchemaElements for all the Records in the Input Feed.
     private TreeSet<SchemaElement> list = new TreeSet<SchemaElement>();
 
-    ;
-
     // No of Fields in the input feed.
     public int getNoOfFields() {
         return list.size();
     }
-
-    ;
 
     // Add a Schema Element to the Record List.
     public void addSchemaElement(String fieldName, int fieldIndex, FieldType fieldType) {
@@ -46,12 +42,21 @@ public class Schema {
         public String fieldName;
         public int fieldIndex;
         public FieldType fieldType;
+        public double supportThreshold = 0;
 
         public SchemaElement(String fieldName, int fieldIndex, FieldType fieldType) {
             this.fieldName = fieldName;
             this.fieldIndex = fieldIndex;
             this.fieldType = fieldType;
         }
+        
+        public SchemaElement(String fieldName, int fieldIndex, FieldType fieldType, double thresh) {
+            this.fieldName = fieldName;
+            this.fieldIndex = fieldIndex;
+            this.fieldType = fieldType;
+            this.supportThreshold = thresh;
+        }
+        
 
         public int compareTo(SchemaElement o) {
             return this.fieldName.compareTo(o.fieldName);

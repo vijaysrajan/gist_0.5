@@ -10,7 +10,7 @@ import com.fratics.precis.fis.util.BitSet;
 public class BaseFeedElement {
 
     protected BitSet b;
-    protected double metric;
+    protected MetricList metric = new MetricList();
 
     public BaseFeedElement() {
         b = new BitSet();
@@ -68,12 +68,21 @@ public class BaseFeedElement {
         this.b.set(e);
     }
 
-    public double getMetric() {
+    public boolean isThresholdSatisfied() {
+    		return metric.isThresholdSatisfied();
+    }
+    
+    
+    public MetricList getMetric() {
         return metric;
     }
 
-    public void setMetric(double metric) {
-        this.metric = metric;
+    public void setMetric(double [] metric) {
+        this.metric.updateMetrics(metric);
+    }
+    
+    public void setMetric(MetricList metric) {
+        this.metric.updateMetrics(metric);
     }
 
     public int getCardinality() {

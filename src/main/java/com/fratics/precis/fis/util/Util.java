@@ -40,9 +40,9 @@ public class Util {
                 ret.append(PrecisConfigProperties.OUTPUT_RECORD_SEPERATOR_DIMENSION);
         }
         ret.append(PrecisConfigProperties.OUTPUT_RECORD_SEPERATOR_METRIC);
-        ret.append(metricName);
-        ret.append(PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR);
-        ret.append(bce.getMetric());
+        //ret.append(metricName);
+        //ret.append(PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR);
+        ret.append(bce.getMetric().toString());
         ret.append("\n");
         return ret.toString();
 
@@ -52,14 +52,14 @@ public class Util {
         String ret = "";
         if (stage == 1) {
             for (BaseCandidateElement bce : o.inputObject.firstStageCandidates.values()) {
-                ret = convertToDims(stage, bce, o.inputObject.getMetricName());
+                ret = convertToDims(stage, bce, o.inputObject.getMetricNamesConcat());
                 pw.writeBytes(ret);
             }
 
         } else {
             for (ArrayList<BaseCandidateElement> al : o.inputObject.currCandidatePart.values()) {
                 for (BaseCandidateElement bce : al) {
-                    ret = convertToDims(stage, bce, o.inputObject.getMetricName());
+                    ret = convertToDims(stage, bce, o.inputObject.getMetricNamesConcat());
                     pw.writeBytes(ret);
                 }
             }

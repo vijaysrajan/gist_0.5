@@ -26,19 +26,25 @@ public class BaseCandidateElement extends BaseFeedElement {
         this.metric = e.getMetric();
     }
 
-    public BaseCandidateElement(BitSet b, double metric) {
+    public BaseCandidateElement(BitSet b, double [] metric) {
         this.b = b;
-        this.metric = metric;
+        this.metric.updateMetrics(metric);
     }
 
     public void incrMetric() {
-        this.metric++;
+    		this.metric.incrementMetrics();
+
     }
 
-    public void incrMetricBy(double metric) {
-        this.metric += metric;
+    public void incrMetricBy(double [] metric) {
+        this.metric.updateMetrics(metric);
     }
 
+    public void incrMetricBy(MetricList ml) {
+        this.metric.updateMetrics(ml);
+    }
+    
+    
     public boolean equals(BaseCandidateElement b) {
         return this.b == b.getBitSet();
     }

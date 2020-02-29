@@ -2,6 +2,7 @@ package com.fratics.precis.fis.main.metrics;
 
 import com.fratics.precis.exception.PrecisException;
 import com.fratics.precis.fis.base.InputObject;
+import com.fratics.precis.fis.base.MetricList;
 import com.fratics.precis.fis.base.Schema.FieldType;
 
 import static com.fratics.precis.fis.util.Util.isIgnoredWord;
@@ -26,8 +27,19 @@ public class MetricsPrecisInputObject extends InputObject {
         if (!this.isInitialized())
             throw new PrecisException("Schema Not Loaded");
         // Schema is loaded, check if metrics index is set.
-        if (this.getMetricIndex() < 0)
+        if (!MetricList.isMetricIndexPresentAndThresholdSet())
             throw new PrecisException("No Metrics Field in Schema");
+        MetricList ml = new MetricList();
+        int metricIndex = 0;
+        for (int i = 0; i < fieldObjects.length; i++) {
+            if (fieldObjects[i].getSchemaElement().fieldType == FieldType.METRIC) {
+            		index = fieldObjects[i].getSchemaElement().fieldIndex;
+            		ml.updateMetrics(metricIndex, Double.parseDouble(str[index]));
+            		metricIndex++;
+            }
+        }
+        index = 0;
+        
         for (int i = 0; i < fieldObjects.length; i++) {
             if (fieldObjects[i].getSchemaElement().fieldType == FieldType.METRIC)
                 continue;
@@ -39,7 +51,7 @@ public class MetricsPrecisInputObject extends InputObject {
                 continue;
             } else {
                 if (!isIgnoredWord(str[index]))
-                    fieldObjects[i].addFieldValueBy(str[index].trim(), Double.parseDouble(str[this.metricIndex]));
+                    fieldObjects[i].addFieldValueBy(str[index].trim(),  MetricList.clone(ml));
             }
         }
     }

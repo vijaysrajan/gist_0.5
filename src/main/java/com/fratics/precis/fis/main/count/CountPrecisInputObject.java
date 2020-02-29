@@ -2,6 +2,8 @@ package com.fratics.precis.fis.main.count;
 
 import com.fratics.precis.exception.PrecisException;
 import com.fratics.precis.fis.base.InputObject;
+import com.fratics.precis.fis.base.MetricList;
+import com.fratics.precis.fis.base.Schema.FieldType;
 
 import java.util.Arrays;
 
@@ -21,15 +23,20 @@ public class CountPrecisInputObject extends InputObject {
         if (!this.isInitialized())
             throw new PrecisException("Schema Not Loaded");
         try {
+        	
+            MetricList ml = new MetricList();
+    			ml.incrementMetrics();
             for (int i = 0; i < fieldObjects.length; i++) {
                 index = fieldObjects[i].getSchemaElement().fieldIndex;
                 if (str[index] == null) {
-                    // fieldObjects[i].addFieldValue(DEF_VALUE);
+                    //fieldObjects[i].addFieldValue(DEF_VALUE);
                     // Ignore Null fields
                     continue;
                 } else {
-                    if (!isIgnoredWord(str[index]))
-                        fieldObjects[i].addFieldValue(str[index].trim());
+                    if (!isIgnoredWord(str[index])) {
+                        //fieldObjects[i].addFieldValue(str[index].trim());
+                        fieldObjects[i].addFieldValueBy(str[index].trim(),  MetricList.clone(ml));
+                    }
                 }
             }
         } catch (Exception e) {

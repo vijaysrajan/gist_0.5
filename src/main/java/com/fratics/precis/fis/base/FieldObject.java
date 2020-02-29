@@ -24,7 +24,7 @@ public class FieldObject {
     private SchemaElement schElement;
 
     // Map of Values and their count (or) sum of metrics.
-    private Map<String, MutableDouble> map = new HashMap<String, MutableDouble>();
+    private Map<String, MetricList> map = new HashMap<String, MetricList>();
 
     public SchemaElement getSchemaElement() {
         return schElement;
@@ -34,7 +34,7 @@ public class FieldObject {
         this.schElement = schElement;
     }
 
-    public Map<String, MutableDouble> getMap() {
+    public Map<String, MetricList> getMap() {
         return map;
     }
 
@@ -49,12 +49,12 @@ public class FieldObject {
 	 */
 
     public void addFieldValue(String key) {
-        MutableDouble value = map.get(key);
+        MetricList value = map.get(key);
         if (value == null) {
-            value = new MutableDouble();
+            value = new MetricList();
             map.put(key, value);
         } else {
-            value.inc();
+            value.incrementMetrics();
         }
     }
 
@@ -64,13 +64,12 @@ public class FieldObject {
 	 * this record, else add the value and set its metric from this record.
 	 */
 
-    public void addFieldValueBy(String key, double metric) {
-        MutableDouble value = map.get(key);
+    public void addFieldValueBy(String key, MetricList metric) {
+        MetricList value = map.get(key);
         if (value == null) {
-            value = new MutableDouble(metric);
-            map.put(key, value);
+            map.put(key, metric);
         } else {
-            value.incBy(metric);
+            value.updateMetrics(metric);
         }
     }
 

@@ -40,7 +40,7 @@ public abstract class InputObject implements Serializable {
     // Threshold Counter Object
     public TreeMap<String, MutableDouble> thresholdCounter = new TreeMap<String, MutableDouble>();
     // Line Number Value Map.
-    public HashMap<Long, Double> lineNumberValue = new HashMap<Long, Double>();
+    public HashMap<Long, MetricList> lineNumberValue = new HashMap<Long, MetricList>();
     // Candidate Line Numbers.
     public HashMap<BitSet, BitSet> candidateLineNumberList = new HashMap<BitSet, BitSet>();
     public int currentStage = -1;
@@ -52,23 +52,31 @@ public abstract class InputObject implements Serializable {
     protected boolean countPrecis = true;
     // Partitioned Input Feed.
     protected BaseFeedPartitioner partitioner = null;
-    // Column index of the metric field in the input data record.
-    protected int metricIndex = -1;
     // Metric Field Name.
-    protected String metricName = "metric";
-    // Threshold applied for candidate generation.
-    protected double threshold;
+    protected String [] metricName = null;
     // No of Lines in the data stream (or) flat file.
     private long noOfLines = 0;
-
-    public double getThreshold() {
-        return threshold;
+    
+    
+    public int [] getIndexOfMetrics() {
+    	return MetricList.getMetricIndexInSchema();
+    }
+    public void setIndexOfMetrics(int [] idx) {
+    	MetricList.setMetricIndexInSchema(idx);
+    }
+    public int getNoOfMetrics() {
+	return MetricList.getNumOfMetric();
+    }
+    public void setNoOfMetrics(int noOfMetrics) {
+	MetricList.setNumOfMetric(noOfMetrics);
+    }	
+    public double [] getThreshold() {
+        return MetricList.getThreshold();
     }
 
-    public void setThreshold(double threshold) {
-        this.threshold = threshold;
+    public void setThreshold(double [] threshold) {
+        MetricList.setThreshold(threshold);
     }
-
     public BaseFeedPartitioner getPartitioner() {
         return partitioner;
     }
@@ -81,20 +89,23 @@ public abstract class InputObject implements Serializable {
         return this.countPrecis;
     }
 
-    public String getMetricName() {
+    private static StringBuilder sb_getMetricName = new StringBuilder(); 
+    public String getMetricNamesConcat() {
+    		if (InputObject.sb_getMetricName.length() == 0) {
+    			sb_getMetricName.append(MetricList.getMetricNamesConcat());
+    		} else {
+    			sb_getMetricName.toString();
+    		}
+    		return InputObject.sb_getMetricName.toString();
+    }
+    
+    public String [] getMetricName() {
         return this.metricName;
     }
 
-    public void setMetricName(String metricName) {
-        this.metricName = metricName;
-    }
-
-    public int getMetricIndex() {
-        return this.metricIndex;
-    }
-
-    public void setMetricIndex(int metricIndex) {
-        this.metricIndex = metricIndex;
+    public void setMetricName(String [] metricName) {
+        this.metricName = metricName ;
+        MetricList.setMetricNames(metricName);
     }
 
     public int getNoOfFields() {
@@ -124,7 +135,7 @@ public abstract class InputObject implements Serializable {
     /*
      *
      */
-    public void addLineNumberMetric(long lineNumber, double d) {
+    public void addLineNumberMetric(long lineNumber, MetricList d) {
         this.lineNumberValue.put(lineNumber, d);
     }
 
@@ -139,10 +150,10 @@ public abstract class InputObject implements Serializable {
         tmp.clear(dimSetBit);
         tmp.clear(valSetBit);
         if (currCandidatePart.containsKey(tmp)) {
-            currCandidatePart.get(tmp).add(new BaseCandidateElement(b, 0.0));
+            currCandidatePart.get(tmp).add(new BaseCandidateElement(b, new double[MetricList.getNumOfMetric()]));
         } else {
             ArrayList<BaseCandidateElement> al = new ArrayList<BaseCandidateElement>();
-            al.add(new BaseCandidateElement(b, 0.0));
+            al.add(new BaseCandidateElement(b, new double[MetricList.getNumOfMetric()]));
             currCandidatePart.put(tmp, al);
         }
         currCandidateSet.add(b);
@@ -209,13 +220,17 @@ public abstract class InputObject implements Serializable {
             z.and(x);
         }
         if (this.countPrecis) {
-            bce.setMetric(z.cardinality());
+            MetricList ml = new MetricList(1);
+            double [] m = new double[1];
+            m[0] = z.cardinality();
+            ml.updateMetrics(m);
+            bce.setMetric(ml);
         } else {
-            double d = 0.0;
+            MetricList ml = new MetricList(MetricList.getNumOfMetric());
             for (int i = z.nextSetBit(0); i != -1; i = z.nextSetBit(i + 1)) {
-                d += this.lineNumberValue.get((long) i).doubleValue();
+                ml.updateMetrics(this.lineNumberValue.get((long) i));
             }
-            bce.setMetric(d);
+            bce.setMetric(ml);
         }
         z = null;
     }
@@ -249,8 +264,9 @@ public abstract class InputObject implements Serializable {
         for (ArrayList<BaseCandidateElement> al : this.currCandidatePart.values()) {
             ArrayList<BaseCandidateElement> removeList = new ArrayList<BaseCandidateElement>();
             for (BaseCandidateElement bce : al) {
-                if (bce.getMetric() < this.threshold)
+                if (!bce.isThresholdSatisfied()) {
                     removeList.add(bce);
+                }
             }
             for (BaseCandidateElement bce : removeList) {
                 al.remove(bce);

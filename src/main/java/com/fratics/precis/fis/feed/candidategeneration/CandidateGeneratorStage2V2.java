@@ -1,6 +1,7 @@
 package com.fratics.precis.fis.feed.candidategeneration;
 
 import com.fratics.precis.fis.base.BaseCandidateElement;
+import com.fratics.precis.fis.base.MetricList;
 import com.fratics.precis.fis.base.PrecisProcessor;
 import com.fratics.precis.fis.base.ValueObject;
 import com.fratics.precis.fis.util.BitSet;
@@ -71,7 +72,8 @@ public class CandidateGeneratorStage2V2 extends PrecisProcessor {
         }
 
         // Apply the threshold handler.
-        double currentThreshold = thresholdCalculator.getThresholdValue(o.inputObject.currentStage);
+        //double currentThreshold = thresholdCalculator.getThresholdValue(o.inputObject.currentStage);
+        double [] currentThreshold = MetricList.getThreshold(); 
         o.inputObject.setThreshold(currentThreshold);
         boolean ret = o.inputObject.applyThreshold();
         milliSec2 = new Date().getTime();
@@ -80,15 +82,6 @@ public class CandidateGeneratorStage2V2 extends PrecisProcessor {
         // Dump the Candidate Stage.
         if (ret) Util.dump(this.currStage, o);
         //Applying the next stage threshold for candidate generation.
-        if(PrecisConfigProperties.USE_THRESHOLD_GEN){
-            double nextThreshold = thresholdCalculator.getThresholdValue(o.inputObject.currentStage + 1);
-            if(nextThreshold > currentThreshold){
-                logger.info("Applying the Next Stage " + (currStage + 1) + " Threshold for Candidate Generation :: " + nextThreshold);
-                o.inputObject.setThreshold(nextThreshold);
-                o.inputObject.applyThreshold();
-                logger.info("No of Candidates After Applying New Threshold::" + o.inputObject.currCandidateSet.size());
-            }
-        }
         // Move the precis context to next stage - 3
         o.inputObject.moveToNextStage();
         return ret;
