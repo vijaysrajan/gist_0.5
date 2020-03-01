@@ -1,7 +1,8 @@
 package com.fratics.precis.util;
 
+import com.googlecode.javaewah.datastructure.BitSet;
+
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Comparator;
 
 public class BitSetComparator implements Comparator<BitSet> {
@@ -25,7 +26,6 @@ public class BitSetComparator implements Comparator<BitSet> {
         b3.set(3);
         b3.set(7);
         b3.set(9);
-
 
         al.add(b1);
         al.add(b2);

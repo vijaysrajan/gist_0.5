@@ -3,6 +3,7 @@ package com.fratics.precis.fis.base;
 import com.fratics.precis.fis.base.Schema.SchemaElement;
 import com.fratics.precis.fis.feed.BaseFeedPartitioner;
 import com.fratics.precis.fis.feed.dimval.DimValIndex;
+import com.fratics.precis.fis.util.BitSet;
 
 import java.io.Serializable;
 import java.util.*;
@@ -39,7 +40,7 @@ public abstract class InputObject implements Serializable {
     // Threshold Counter Object
     public TreeMap<String, MutableDouble> thresholdCounter = new TreeMap<String, MutableDouble>();
     // Line Number Value Map.
-    public HashMap<Long, Double> lineNumberValue = new HashMap<Long, Double>();
+    public HashMap<Long, MetricList> lineNumberValue = new HashMap<Long, MetricList>();
     // Candidate Line Numbers.
     public HashMap<BitSet, BitSet> candidateLineNumberList = new HashMap<BitSet, BitSet>();
     public int currentStage = -1;
@@ -51,23 +52,31 @@ public abstract class InputObject implements Serializable {
     protected boolean countPrecis = true;
     // Partitioned Input Feed.
     protected BaseFeedPartitioner partitioner = null;
-    // Column index of the metric field in the input data record.
-    protected int metricIndex = -1;
     // Metric Field Name.
-    protected String metricName = "metric";
-    // Threshold applied for candidate generation.
-    protected double threshold;
+    protected String [] metricName = null;
     // No of Lines in the data stream (or) flat file.
     private long noOfLines = 0;
-
-    public double getThreshold() {
-        return threshold;
+    
+    
+    public int [] getIndexOfMetrics() {
+    	return MetricList.getMetricIndexInSchema();
+    }
+    public void setIndexOfMetrics(int [] idx) {
+    	MetricList.setMetricIndexInSchema(idx);
+    }
+    public int getNoOfMetrics() {
+	return MetricList.getNumOfMetric();
+    }
+    public void setNoOfMetrics(int noOfMetrics) {
+	MetricList.setNumOfMetric(noOfMetrics);
+    }	
+    public double [] getThreshold() {
+        return MetricList.getThreshold();
     }
 
-    public void setThreshold(double threshold) {
-        this.threshold = threshold;
+    public void setThreshold(double [] threshold) {
+        MetricList.setThreshold(threshold);
     }
-
     public BaseFeedPartitioner getPartitioner() {
         return partitioner;
     }
@@ -80,20 +89,23 @@ public abstract class InputObject implements Serializable {
         return this.countPrecis;
     }
 
-    public String getMetricName() {
+    private static StringBuilder sb_getMetricName = new StringBuilder(); 
+    public String getMetricNamesConcat() {
+    		if (InputObject.sb_getMetricName.length() == 0) {
+    			sb_getMetricName.append(MetricList.getMetricNamesConcat());
+    		} else {
+    			sb_getMetricName.toString();
+    		}
+    		return InputObject.sb_getMetricName.toString();
+    }
+    
+    public String [] getMetricName() {
         return this.metricName;
     }
 
-    public void setMetricName(String metricName) {
-        this.metricName = metricName;
-    }
-
-    public int getMetricIndex() {
-        return this.metricIndex;
-    }
-
-    public void setMetricIndex(int metricIndex) {
-        this.metricIndex = metricIndex;
+    public void setMetricName(String [] metricName) {
+        this.metricName = metricName ;
+        MetricList.setMetricNames(metricName);
     }
 
     public int getNoOfFields() {
@@ -121,36 +133,35 @@ public abstract class InputObject implements Serializable {
     }
 
     /*
-     * 
+     *
      */
-    public void addLineNumberMetric(long lineNumber, double d) {
+    public void addLineNumberMetric(long lineNumber, MetricList d) {
         this.lineNumberValue.put(lineNumber, d);
     }
 
-    /*
+	/*
      * Add a candidate to the Candidate Partition and Candidate List.
-     */
+	 */
 
     public void addCandidate(BitSet b) {
         int dimSetBit = b.previousSetBit(DimValIndex.dimMap.size() - 1);
-        int valSetBit = b.previousSetBit(DimValIndex.dimMap.size()
-                + DimValIndex.dimValMap.size() - 1);
+        int valSetBit = b.previousSetBit(DimValIndex.dimMap.size() + DimValIndex.dimValMap.size() - 1);
         BitSet tmp = (BitSet) b.clone();
         tmp.clear(dimSetBit);
         tmp.clear(valSetBit);
         if (currCandidatePart.containsKey(tmp)) {
-            currCandidatePart.get(tmp).add(new BaseCandidateElement(b, 0.0));
+            currCandidatePart.get(tmp).add(new BaseCandidateElement(b, new double[MetricList.getNumOfMetric()]));
         } else {
             ArrayList<BaseCandidateElement> al = new ArrayList<BaseCandidateElement>();
-            al.add(new BaseCandidateElement(b, 0.0));
+            al.add(new BaseCandidateElement(b, new double[MetricList.getNumOfMetric()]));
             currCandidatePart.put(tmp, al);
         }
         currCandidateSet.add(b);
     }
 
-    /*
-     * Add bit set & corresponding line numbers.
-     */
+	/*
+	 * Add bit set & corresponding line numbers.
+	 */
 
     public void addCandidateLineNumber(BitSet b, long lineNumber) {
         if (this.candidateLineNumberList.containsKey(b)) {
@@ -162,15 +173,13 @@ public abstract class InputObject implements Serializable {
         }
     }
 
-    /*
-     * Add a Fist Stage Candidate.
-     */
+	/*
+	 * Add a Fist Stage Candidate.
+	 */
 
-    public void addFirstStageCandidateElement(BaseCandidateElement b,
-                                              long lineNumber) {
+    public void addFirstStageCandidateElement(BaseCandidateElement b, long lineNumber) {
         if (this.firstStageCandidates.containsKey(b.getBitSet())) {
-            this.firstStageCandidates.get(b.getBitSet()).incrMetricBy(
-                    b.getMetric());
+            this.firstStageCandidates.get(b.getBitSet()).incrMetricBy(b.getMetric());
         } else {
             this.firstStageCandidates.put(b.getBitSet(), b);
         }
@@ -178,17 +187,15 @@ public abstract class InputObject implements Serializable {
             addCandidateLineNumber(b.getBitSet(), lineNumber);
     }
 
-    /*
-     * apply base feed on candidates.
-     */
+	/*
+	 * apply base feed on candidates.
+	 */
 
     public void apply(BaseCandidateElement bce) {
         BitSet b = new BitSet();
         ArrayList<BitSet> al = new ArrayList<BitSet>();
-        int prevDimBit = bce.getBitSet().previousSetBit(
-                DimValIndex.dimMap.size() - 1);
-        int prevDimValBit = bce.getBitSet().previousSetBit(
-                DimValIndex.getPrecisBitSetLength() - 1);
+        int prevDimBit = bce.getBitSet().previousSetBit(DimValIndex.dimMap.size() - 1);
+        int prevDimValBit = bce.getBitSet().previousSetBit(DimValIndex.getPrecisBitSetLength() - 1);
 
         for (int i = 0; i < this.currentStage; i++) {
             b.set(prevDimBit);
@@ -203,6 +210,7 @@ public abstract class InputObject implements Serializable {
 
         // al.sort(new BitSetComparator());
 
+
         BitSet z = null;
         for (BitSet x : al) {
             if (z == null) {
@@ -212,21 +220,25 @@ public abstract class InputObject implements Serializable {
             z.and(x);
         }
         if (this.countPrecis) {
-            bce.setMetric(z.cardinality());
+            MetricList ml = new MetricList(1);
+            double [] m = new double[1];
+            m[0] = z.cardinality();
+            ml.updateMetrics(m);
+            bce.setMetric(ml);
         } else {
-            double d = 0.0;
+            MetricList ml = new MetricList(MetricList.getNumOfMetric());
             for (int i = z.nextSetBit(0); i != -1; i = z.nextSetBit(i + 1)) {
-                d += this.lineNumberValue.get((long) i).doubleValue();
+                ml.updateMetrics(this.lineNumberValue.get((long) i));
             }
-            bce.setMetric(d);
+            bce.setMetric(ml);
         }
         z = null;
     }
 
-    /*
-     * As a Precis Stage Completes, this method moves Precis Execution context
-     * from the current stage to the Next Stage.
-     */
+	/*
+	 * As a Precis Stage Completes, this method moves Precis Execution context
+	 * from the current stage to the Next Stage.
+	 */
 
     public void moveToNextStage() {
         prevCandidatePart = currCandidatePart;
@@ -235,26 +247,26 @@ public abstract class InputObject implements Serializable {
         currCandidateSet = new HashSet<BitSet>();
     }
 
-    /*
-     * Applies the Threshold on the current stage candidates, keeps the
-     * candidates which has passed the threshold and rejects/removes the fail
-     * over candidates.
-     * 
-     * Returns success if candidates are available for next stage, failure
-     * otherwise.
-     */
+	/*
+	 * Applies the Threshold on the current stage candidates, keeps the
+	 * candidates which has passed the threshold and rejects/removes the fail
+	 * over candidates.
+	 * 
+	 * Returns success if candidates are available for next stage, failure
+	 * otherwise.
+	 */
 
     public boolean applyThreshold() {
 
         if (this.currCandidateSet.size() <= 0)
             return false;
 
-        for (ArrayList<BaseCandidateElement> al : this.currCandidatePart
-                .values()) {
+        for (ArrayList<BaseCandidateElement> al : this.currCandidatePart.values()) {
             ArrayList<BaseCandidateElement> removeList = new ArrayList<BaseCandidateElement>();
             for (BaseCandidateElement bce : al) {
-                if (bce.getMetric() < this.threshold)
+                if (!bce.isThresholdSatisfied()) {
                     removeList.add(bce);
+                }
             }
             for (BaseCandidateElement bce : removeList) {
                 al.remove(bce);
@@ -264,33 +276,32 @@ public abstract class InputObject implements Serializable {
         return (this.currCandidateSet.size() > 0);
     }
 
-    /*
-     * Applies the Schema Object, generated by the PrecisSchemaProcessor on the
-     * input data feed. The schema elements are added to the respective fields
-     * in the field objects.
-     */
+	/*
+	 * Applies the Schema Object, generated by the PrecisSchemaProcessor on the
+	 * input data feed. The schema elements are added to the respective fields
+	 * in the field objects.
+	 */
 
     public void loadSchema(Schema sch) {
         // need to alter loadSchema in case of Metrics.
         this.noOfFields = sch.getNoOfFields();
         fieldObjects = new FieldObject[noOfFields];
-        SchemaElement[] list = sch.getSchemaList()
-                .toArray(new SchemaElement[0]);
+        SchemaElement[] list = sch.getSchemaList().toArray(new SchemaElement[0]);
         for (int i = 0; i < noOfFields; i++) {
             fieldObjects[i] = new FieldObject();
             fieldObjects[i].setSchemaElement(list[i]);
         }
     }
 
-    /*
-     * The actual input data needs to loaded as per the input feed
-     * characteristics. The feed characteristics, delimiters, definitions,
-     * serialization, deserialization, data formats, block data, sequence data,
-     * encryption formats, field info needs to be taken care in the loadInput()
-     * method by the Deriving Class.
-     * 
-     * So loadInputCharacteristics() method is a abstract method.
-     */
+	/*
+	 * The actual input data needs to loaded as per the input feed
+	 * characteristics. The feed characteristics, delimiters, definitions,
+	 * serialization, deserialization, data formats, block data, sequence data,
+	 * encryption formats, field info needs to be taken care in the loadInput()
+	 * method by the Deriving Class.
+	 * 
+	 * So loadInputCharacteristics() method is a abstract method.
+	 */
 
     public abstract void loadInputCharacteristics(Object o) throws Exception;
 
@@ -299,17 +310,15 @@ public abstract class InputObject implements Serializable {
      */
     protected abstract boolean isInitialized();
 
-    /*
-     * A simple toString() method defined to provide the current state of the
-     * Precis Execution and its relevent objects contained in the input object.
-     */
+	/*
+	 * A simple toString() method defined to provide the current state of the
+	 * Precis Execution and its relevent objects contained in the input object.
+	 */
 
     public String toString() {
-        return "=====================================================\n"
-                + "\nNo of Records :: " + this.getNoOfLines() + "\n\n"
-                + "isCountPrecis :: " + this.isCountPrecis() + "\n\n"
-                + "Field Objects :: " + Arrays.toString(fieldObjects) + "\n\n"
-                + "Stages Run :: " + this.currentStage + "\n\n"
+        return "=====================================================\n" + "\nNo of Records :: " + this.getNoOfLines()
+                + "\n\n" + "isCountPrecis :: " + this.isCountPrecis() + "\n\n" + "Field Objects :: "
+                + Arrays.toString(fieldObjects) + "\n\n" + "Stages Run :: " + this.currentStage + "\n\n"
                 + "DimVal Indexes :: " + DimValIndex.dumpIndexes() + "\n"
                 + "=====================================================\n";
     }

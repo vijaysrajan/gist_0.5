@@ -14,8 +14,8 @@ public class SanitationInputObject extends InputObject {
     }
 
     public String toString() {
-        return "\nNo of Records :: " + this.getNoOfLines() + "\n\n"
-                + "Field Objects :: " + Arrays.toString(fieldObjects) + "\n\n";
+        return "\nNo of Records :: " + this.getNoOfLines() + "\n\n" + "Field Objects :: "
+                + Arrays.toString(fieldObjects) + "\n\n";
     }
 
     public void loadInputCharacteristics(Object o) throws Exception {

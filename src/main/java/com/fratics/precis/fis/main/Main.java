@@ -4,6 +4,9 @@ import com.fratics.precis.fis.main.count.CountPrecisMain;
 import com.fratics.precis.fis.main.metrics.MetricsPrecisMain;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.util.ConfigObject;
+import com.fratics.precis.util.HierarchyDimsNegation;
+import com.fratics.precis.util.Logger;
+import com.fratics.precis.util.ThresholdCalculator;
 
 import java.io.File;
 
@@ -17,12 +20,9 @@ public class Main {
     private static void printUsage() {
         System.out.println();
         System.out.println();
-        System.out
-                .print("Usage :: java com.fratics.precis.fis.main.Main [${fileName}]");
-        System.out
-                .println("Optional Argument - Configuration File Name, If Configuration file is not Specified");
-        System.out
-                .println("Default Configuration file in location ./conf/precisconfig.properties will be loaded");
+        System.out.print("Usage :: java com.fratics.precis.fis.main.Main [${fileName}]");
+        System.out.println("Optional Argument - Configuration File Name, If Configuration file is not Specified");
+        System.out.println("Default Configuration file in location ./conf/precisconfig.properties will be loaded");
         System.out.println();
         System.out.println();
     }
@@ -33,13 +33,29 @@ public class Main {
             // Check for configuration file in command line args.
             if (args.length > 0) {
                 if (!new File(args[0]).exists())
-                    throw new Exception("Configuration File " + args[0]
-                            + " doesn't exist");
+                    throw new Exception("Configuration File " + args[0] + " doesn't exist");
                 ConfigObject.setConfigFile(args[0]);
             }
 
             // Initialize the precis configuration.
             PrecisConfigProperties.init();
+
+            //Initialize Threshold calculator
+            if (PrecisConfigProperties.USE_THRESHOLD_GEN) {
+                ThresholdCalculator thresholdCalculator = ThresholdCalculator.getInstance();
+                thresholdCalculator.initialize();
+            }
+
+            //Initialize Hierarchy Dims Negation.
+            if (PrecisConfigProperties.HIERARCHY_DIMS_ENABLED) {
+                HierarchyDimsNegation hierarchyDimsNegation = HierarchyDimsNegation.getInstance();
+                hierarchyDimsNegation.initialize();
+            }
+            //Logging Init
+            if (PrecisConfigProperties.LOGGING_ENABLED) {
+                Logger logger = Logger.getInstance();
+                logger.initialize();
+            }
 
             // Verify, its either a count precis (or) metrics precis.
             // and launch the desired Precis.

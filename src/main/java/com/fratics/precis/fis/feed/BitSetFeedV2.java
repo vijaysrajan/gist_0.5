@@ -1,6 +1,7 @@
 package com.fratics.precis.fis.feed;
 
 import com.fratics.precis.fis.base.*;
+import com.fratics.precis.fis.base.Schema.FieldType;
 import com.fratics.precis.fis.feed.dimval.DimValIndex;
 import com.fratics.precis.fis.feed.dimval.DimValIndexBase;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
@@ -56,22 +57,46 @@ public class BitSetFeedV2 extends PrecisProcessor {
         boolean metricPrecis = !o.inputObject.isCountPrecis();
         boolean elementAddedflag = false;
         boolean metricGenerated = false;
-        double metric = 0.0;
+        MetricList metric = null;
+        MetricList totalMetric = new MetricList();
         long lineNumber = 0;
+        
+        if (!metricPrecis) {
+            String [] metricNames = new String[1];
+            metricNames[0] = PrecisConfigProperties.COUNT_PRECIS_METRIC_NAME;
+            o.inputObject.setMetricName(metricNames);
+        }
         // read the input stream object
         while ((str = ps.readStream()) != null) {
             lineNumber++;
-            BaseFeedElement e = new BaseFeedElement(
-                    DimValIndexBase.getPrecisBitSetLength());
+            BaseFeedElement e = new BaseFeedElement(DimValIndexBase.getPrecisBitSetLength());
             elementAddedflag = false;
             metricGenerated = false;
-            metric = 0.0;
+            metric = new MetricList();
+            int metricIndex = 0;
+            for (int i = 0; i < fi.length; i++) {
+                if (fi[i].getSchemaElement().fieldType == FieldType.METRIC) {
+               		int index = fi[i].getSchemaElement().fieldIndex;
+               		metric.updateMetrics(metricIndex, Double.parseDouble(str[index]));
+               		metricIndex++;
+                } else {
+               		if (PrecisConfigProperties.IS_COUNT_PRECIS == true) {
+            	             metric.incrementMetrics();
+                	}
+                }
+            }
+            
+            if(metricPrecis) {
+                totalMetric.updateMetrics(metric);
+            } else {
+                totalMetric.incrementMetrics();
+            }
+
             for (int i = 0; i < fi.length; i++) {
 
                 // Create the keys from input feed to check in DimValIndex.
                 String tmpDim = fi[i].getSchemaElement().fieldName;
-                String tmpDimVal = fi[i].getSchemaElement().fieldName
-                        + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR
+                String tmpDimVal = fi[i].getSchemaElement().fieldName + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR
                         + str[fi[i].getSchemaElement().fieldIndex];
 
                 // Checks if the value is present in DimValindex.
@@ -83,39 +108,32 @@ public class BitSetFeedV2 extends PrecisProcessor {
                         e.setBit(index1);
                         e.setBit(index2);
                         elementAddedflag = true;
-                        if (metricPrecis && !metricGenerated) {
+                        if (!metricGenerated) {
                             metricGenerated = true;
-                            metric = Double.parseDouble(str[o.inputObject
-                                    .getMetricIndex()]);
-                            e.setMetric(metric);
-                        }
-                        if (!metricPrecis && !metricGenerated) {
-                            metricGenerated = true;
-                            e.setMetric(1.0);
+                            e.setMetric(MetricList.clone(metric));
                         }
                         // Add the Value to the Fist Stage Candidates.
-                        BaseCandidateElement bce = new BaseCandidateElement(
-                                DimValIndexBase.getPrecisBitSetLength());
+                        BaseCandidateElement bce = new BaseCandidateElement(DimValIndexBase.getPrecisBitSetLength());
                         bce.setBit(index1);
                         bce.setBit(index2);
                         if (metricPrecis)
                             bce.setMetric(metric);
-                        else
-                            bce.setMetric(1.0);
-                        o.inputObject.addFirstStageCandidateElement(bce,
-                                lineNumber);
+                        else {
+                            MetricList m2 = new MetricList();
+                            m2.incrementMetrics();
+                            bce.setMetric(m2);
+                        }
+                        o.inputObject.addFirstStageCandidateElement(bce, lineNumber);
                     }
                 }
             }
             // add the element to the respective partition.
             if (elementAddedflag) {
-                // o.inputObject.addToDataFeedTrie(e);
                 o.inputObject.addLineNumberMetric(lineNumber, e.getMetric());
             }
         }
 
         // o.inputObject.dataFeedTrie.print();
-
         // Dump the contents of partitioner as a file.
         // if (PrecisConfigProperties.DUMP_BITSET_FEED) partitioner.dump();
         // Dump the contents of First Stage Candidates.

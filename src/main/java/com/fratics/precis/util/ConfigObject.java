@@ -43,8 +43,7 @@ public class ConfigObject extends PrecisBase {
     }
 
     public void store(String fileName) throws IOException {
-        this.properties.store(new FileOutputStream(fileName),
-                "dumping precis properties");
+        this.properties.store(new FileOutputStream(fileName), "dumping precis properties");
     }
 
     public void dump() throws IOException {

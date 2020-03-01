@@ -13,8 +13,7 @@ public class ThresholdMain extends PrecisProcessor {
 
     public ThresholdMain(String dataFileName) {
         ps = new PrecisProcessor[2];
-        ps[0] = new PrecisInputCharacteristicsProcessor(new PrecisFileStream(
-                dataFileName));
+        ps[0] = new PrecisInputCharacteristicsProcessor(new PrecisFileStream(dataFileName));
         ps[1] = new ThresholdProcessor();
     }
 
@@ -27,8 +26,7 @@ public class ThresholdMain extends PrecisProcessor {
 
             if (args.length > 0) {
                 if (!new File(args[0]).exists())
-                    throw new Exception("Data File " + args[0]
-                            + " doesn't exist");
+                    throw new Exception("Data File " + args[0] + " doesn't exist");
             }
 
             // Initialize the Value Objects.

@@ -10,22 +10,21 @@ import com.fratics.precis.fis.schema.PrecisSchemaProcessor;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.reader.PrecisFileStream;
 import com.fratics.precis.reader.PrecisInputCharacteristicsProcessor;
+import com.fratics.precis.util.Logger;
 
 public class MetricsPrecisMain extends PrecisProcessor {
 
     private PrecisProcessor[] ps = null;
+    private Logger logger = Logger.getInstance();
 
     public MetricsPrecisMain() {
         // Atleast 2 stages will be run, even if the configuration is less.
         ps = new PrecisProcessor[PrecisConfigProperties.NO_OF_STAGES + 3];
-        ps[0] = new PrecisSchemaProcessor(new PrecisFileStream(
-                PrecisConfigProperties.INPUT_SCHEMA_FILE,
+        ps[0] = new PrecisSchemaProcessor(new PrecisFileStream(PrecisConfigProperties.INPUT_SCHEMA_FILE,
                 PrecisConfigProperties.SCHEMA_RECORD_SEPERATOR));
-        ps[1] = new PrecisInputCharacteristicsProcessor(new PrecisFileStream(
-                PrecisConfigProperties.INPUT_DATA_FILE));
-        ps[2] = new DimValIndex(PrecisConfigProperties.THRESHOLD);
-        ps[3] = new BitSetFeedV2(new PrecisFileStream(
-                PrecisConfigProperties.INPUT_DATA_FILE));
+        ps[1] = new PrecisInputCharacteristicsProcessor(new PrecisFileStream(PrecisConfigProperties.INPUT_DATA_FILE));
+        ps[2] = new DimValIndex();
+        ps[3] = new BitSetFeedV2(new PrecisFileStream(PrecisConfigProperties.INPUT_DATA_FILE));
         ps[4] = new CandidateGeneratorStage2V2();
         for (int i = 3; i <= PrecisConfigProperties.NO_OF_STAGES; i++) {
             ps[i + 2] = new CandidateGeneratorStg3OnwardsV2(i);
@@ -67,8 +66,7 @@ public class MetricsPrecisMain extends PrecisProcessor {
         // Object
         boolean successFlag = true;
         for (int i = 0; i < ps.length && successFlag; i++) {
-            System.err.println("Executing Handler :: "
-                    + ps[i].getClass().getName());
+            logger.info("Executing Handler :: " + ps[i].getClass().getName());
             successFlag = ps[i].process(o);
         }
         return true;

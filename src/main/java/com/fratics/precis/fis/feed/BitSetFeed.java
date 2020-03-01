@@ -1,6 +1,7 @@
 package com.fratics.precis.fis.feed;
 
 import com.fratics.precis.fis.base.*;
+import com.fratics.precis.fis.base.Schema.FieldType;
 import com.fratics.precis.fis.feed.dimval.DimValIndex;
 import com.fratics.precis.fis.feed.dimval.DimValIndexBase;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
@@ -56,21 +57,26 @@ public class BitSetFeed extends PrecisProcessor {
         boolean metricPrecis = !o.inputObject.isCountPrecis();
         boolean elementAddedflag = false;
         boolean metricGenerated = false;
-        double metric = 0.0;
+        MetricList metric = null;
 
         // read the input stream object
         while ((str = ps.readStream()) != null) {
-            BaseFeedElement e = new BaseFeedElement(
-                    DimValIndexBase.getPrecisBitSetLength());
+            BaseFeedElement e = new BaseFeedElement(DimValIndexBase.getPrecisBitSetLength());
             elementAddedflag = false;
             metricGenerated = false;
-            metric = 0.0;
+            metric = new MetricList();
+            int metricIndex = 0;
             for (int i = 0; i < fi.length; i++) {
-
+                if (fi[i].getSchemaElement().fieldType == FieldType.METRIC) {
+                	int index = fi[i].getSchemaElement().fieldIndex;
+                	metric.updateMetrics(metricIndex, Double.parseDouble(str[index]));
+                	metricIndex++;
+                }
+            }
+            for (int i = 0; i < fi.length; i++) {
                 // Create the keys from input feed to check in DimValIndex.
                 String tmpDim = fi[i].getSchemaElement().fieldName;
-                String tmpDimVal = fi[i].getSchemaElement().fieldName
-                        + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR
+                String tmpDimVal = fi[i].getSchemaElement().fieldName + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR
                         + str[fi[i].getSchemaElement().fieldIndex];
 
                 // Checks if the value is present in DimValindex.
@@ -84,26 +90,26 @@ public class BitSetFeed extends PrecisProcessor {
                         elementAddedflag = true;
                         if (metricPrecis && !metricGenerated) {
                             metricGenerated = true;
-                            metric = Double.parseDouble(str[o.inputObject
-                                    .getMetricIndex()]);
-                            e.setMetric(metric);
+                            e.setMetric(MetricList.clone(metric));
                         }
                         // Add the Value to the Fist Stage Candidates.
-                        BaseCandidateElement bce = new BaseCandidateElement(
-                                DimValIndexBase.getPrecisBitSetLength());
+                        BaseCandidateElement bce = new BaseCandidateElement(DimValIndexBase.getPrecisBitSetLength());
                         bce.setBit(index1);
                         bce.setBit(index2);
                         if (metricPrecis)
-                            bce.setMetric(metric);
-                        else
-                            bce.setMetric(1.0);
+                            bce.setMetric(MetricList.clone(metric));
+                        else {
+                            MetricList m2 = new MetricList();
+                            m2.incrementMetrics();
+                            bce.setMetric(m2);
+                        }
                         o.inputObject.addFirstStageCandidateElement(bce, 0);
                     }
                 }
             }
             // add the element to the respective partition.
             if (elementAddedflag) {
-                // System.err.println(e);
+                // logger.info(e);
                 partitioner.addElement(e.getNumberofDimVals() - 1, e);
             }
         }

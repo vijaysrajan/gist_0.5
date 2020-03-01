@@ -18,6 +18,7 @@ public class PrecisConfigProperties {
     public static String OUPUT_CANDIDATE_FILE_PATTERN = "stage_${stage_number}_candidate_file.txt";
     public static boolean IS_COUNT_PRECIS = false;
     public static boolean GENERATE_RAW_CANDIDATE_FILE = false;
+    public static String COUNT_PRECIS_METRIC_NAME = "count";
     public static double THRESHOLD = 36000;
     public static String OUTPUT_DIMVAL_SEPERATOR = Character.toString('\002');
     public static String OUPUT_RAW_CANDIDATE_FILE_PATTERN = "stage_${stage_number}_raw_candidate_file.txt";
@@ -28,6 +29,16 @@ public class PrecisConfigProperties {
     public static boolean DUMP_DIM_FEED = false;
     public static boolean DUMP_BITSET_FEED = false;
     public static HashSet<String> IGN_WORDS = new HashSet<String>(Arrays.asList("null", "", "0"));
+    public static boolean HIERARCHY_DIMS_ENABLED = false;
+    public static String HIERARCHY_DIM_GROUPS = null;
+    public static boolean USE_THRESHOLD_GEN = false;
+    public static boolean USE_THRESHOLD_PERCENTAGE_AFTER_LEVEL_3 = false;
+    public static double THRESHOLD_UPTO_LEVEL_3 = 1;
+    public static boolean USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3 = false;
+    public static String THRESHOLD_GEN_FORMULA_AFTER_LEVEL_3 = "4:1,5:2,6:3,7:4,8:5";
+    public static boolean LOGGING_ENABLED = true;
+    public static String LOGGING_LEVEL = "INFO";
+
 
     private static String convertSpecialChar(String s) {
         if (s.charAt(0) == '\\' && s.charAt(1) == 'u') {
@@ -58,6 +69,10 @@ public class PrecisConfigProperties {
             OUTPUT_DIR = tmp;
         }
 
+        tmp = c.getProperties().getProperty("COUNT_PRECIS_METRIC_NAME");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            COUNT_PRECIS_METRIC_NAME = tmp;
+        }
         tmp = c.getProperties().getProperty("INPUT_RECORD_SEPERATOR");
         if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
             String s = convertSpecialChar(tmp);
@@ -90,7 +105,6 @@ public class PrecisConfigProperties {
             if (s != null)
                 OUTPUT_RECORD_SEPERATOR_STAGENUMBER = s;
         }
-
 
         tmp = c.getProperties().getProperty("INPUT_SCHEMA_FILE");
         if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
@@ -157,7 +171,51 @@ public class PrecisConfigProperties {
             IGN_WORDS = new HashSet<String>(Arrays.asList(tmp.split(",")));
         }
 
+        tmp = c.getProperties().getProperty("HIERARCHY_DIMS_ENABLED");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            HIERARCHY_DIMS_ENABLED = Boolean.parseBoolean(tmp);
+        }
 
+        tmp = c.getProperties().getProperty("HIERARCHY_DIM_GROUPS");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            HIERARCHY_DIM_GROUPS = tmp;
+        }
+
+        tmp = c.getProperties().getProperty("USE_THRESHOLD_GEN");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            USE_THRESHOLD_GEN = Boolean.parseBoolean(tmp);
+        }
+
+
+        tmp = c.getProperties().getProperty("USE_THRESHOLD_PERCENTAGE_AFTER_LEVEL_3");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            USE_THRESHOLD_PERCENTAGE_AFTER_LEVEL_3 = Boolean.parseBoolean(tmp);
+        }
+
+        tmp = c.getProperties().getProperty("THRESHOLD_UPTO_LEVEL_3");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            THRESHOLD_UPTO_LEVEL_3 = Double.parseDouble(tmp);
+        }
+
+        tmp = c.getProperties().getProperty("THRESHOLD_GEN_FORMULA_AFTER_LEVEL_3");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            THRESHOLD_GEN_FORMULA_AFTER_LEVEL_3 = tmp;
+        }
+
+        tmp = c.getProperties().getProperty("USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            USE_THRESHOLD_PERCENTAGE_UPTO_LEVEL_3 = Boolean.parseBoolean(tmp);
+        }
+
+        tmp = c.getProperties().getProperty("LOGGING_LEVEL");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            LOGGING_LEVEL = tmp;
+        }
+
+        tmp = c.getProperties().getProperty("LOGGING_ENABLED");
+        if (!(tmp == null || tmp.equalsIgnoreCase(""))) {
+            LOGGING_ENABLED = Boolean.parseBoolean(tmp);
+        }
     }
 
 }

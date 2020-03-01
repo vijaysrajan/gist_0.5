@@ -16,11 +16,9 @@ public class SanitationMain extends PrecisProcessor {
 
     public SanitationMain() {
         ps = new PrecisProcessor[3];
-        ps[0] = new PrecisSchemaProcessor(new PrecisFileStream(
-                PrecisConfigProperties.INPUT_SCHEMA_FILE,
+        ps[0] = new PrecisSchemaProcessor(new PrecisFileStream(PrecisConfigProperties.INPUT_SCHEMA_FILE,
                 PrecisConfigProperties.SCHEMA_RECORD_SEPERATOR));
-        ps[1] = new PrecisInputCharacteristicsProcessor(new PrecisFileStream(
-                PrecisConfigProperties.INPUT_DATA_FILE));
+        ps[1] = new PrecisInputCharacteristicsProcessor(new PrecisFileStream(PrecisConfigProperties.INPUT_DATA_FILE));
         ps[2] = new SanitationRuleProcessor();
     }
 
@@ -30,8 +28,7 @@ public class SanitationMain extends PrecisProcessor {
             // Check for configuration file in command line args.
             if (args.length > 0) {
                 if (!new File(args[0]).exists())
-                    throw new Exception("Configuration File " + args[0]
-                            + " doesn't exist");
+                    throw new Exception("Configuration File " + args[0] + " doesn't exist");
                 ConfigObject.setConfigFile(args[0]);
             }
 

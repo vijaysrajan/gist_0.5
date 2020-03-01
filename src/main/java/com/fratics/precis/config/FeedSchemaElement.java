@@ -43,7 +43,11 @@ public class FeedSchemaElement {
         this.includedForPrecisCalculation = includedForPrecisCalculation;
     }
 
-    public enum DIM_TYPE {DIMENSION, METRIC}
+    public enum DIM_TYPE {
+        DIMENSION, METRIC
+    }
 
-    public enum DIM_DATA_TYPE {STRING, INT, LONG, DOUBLE}
+    public enum DIM_DATA_TYPE {
+        STRING, INT, LONG, DOUBLE
+    }
 }

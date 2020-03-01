@@ -1,6 +1,7 @@
 package com.fratics.precis.fis.feed.dimval;
 
 import com.fratics.precis.fis.base.FieldObject;
+import com.fratics.precis.fis.base.MetricList;
 import com.fratics.precis.fis.base.MutableDouble;
 import com.fratics.precis.fis.base.ValueObject;
 import com.fratics.precis.fis.util.PrecisConfigProperties;
@@ -24,10 +25,14 @@ import java.util.Map;
 public class DimValIndex extends DimValIndexBase {
 
     // Threshold for the entire Precis application.
-    private double threshold = 0.0;
+    private double [] threshold = new double[MetricList.getNumOfMetric()];
 
-    public DimValIndex(double threshold) {
-        this.threshold = threshold;
+    public DimValIndex() {
+        this.threshold = MetricList.getThreshold();
+    }
+
+    public DimValIndex(double [] threshold) {
+        this.threshold = MetricList.getThreshold();
     }
 
     // Read the input characteristics, apply thershold to the field values,
@@ -35,29 +40,25 @@ public class DimValIndex extends DimValIndexBase {
     public boolean process(ValueObject o) throws Exception {
         int valIndex = 0;
         int dimIndex = 0;
+        this.threshold = thresholdCalculator.getThresholdValue(1);
         o.inputObject.setThreshold(this.threshold);
         FieldObject[] fi = o.inputObject.getFieldObjects();
         for (int i = 0; i < fi.length; i++) {
-            Map<String, MutableDouble> map = fi[i].getMap();
+            Map<String, MetricList> map = fi[i].getMap();
             Iterator<String> it = map.keySet().iterator();
             while (it.hasNext()) {
                 String key = it.next();
-                MutableDouble val = map.get(key);
-                if (val.get() >= threshold) {
+                MetricList val = map.get(key);
+                if (val.isThresholdSatisfied()) {
                     if (!dimMap.containsKey(fi[i].getSchemaElement().fieldName)) {
                         dimMap.put(fi[i].getSchemaElement().fieldName, dimIndex);
-                        revDimMap.put(dimIndex,
-                                fi[i].getSchemaElement().fieldName);
+                        revDimMap.put(dimIndex, fi[i].getSchemaElement().fieldName);
                         dimIndex++;
                     }
-                    if (!dimValMap
-                            .containsKey(fi[i].getSchemaElement().fieldName
-                                    + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR
-                                    + key)) {
-                        dimValMap
-                                .put(fi[i].getSchemaElement().fieldName
-                                        + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR
-                                        + key, valIndex);
+                    if (!dimValMap.containsKey(fi[i].getSchemaElement().fieldName
+                            + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR + key)) {
+                        dimValMap.put(fi[i].getSchemaElement().fieldName
+                                + PrecisConfigProperties.OUTPUT_DIMVAL_SEPERATOR + key, valIndex);
                         valIndex++;
                     }
                 }

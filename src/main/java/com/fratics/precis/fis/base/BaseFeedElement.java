@@ -1,6 +1,6 @@
 package com.fratics.precis.fis.base;
 
-import java.util.BitSet;
+import com.fratics.precis.fis.util.BitSet;
 
 /*
  * This class is the actual bit representation of a record in the input feed. 
@@ -10,7 +10,7 @@ import java.util.BitSet;
 public class BaseFeedElement {
 
     protected BitSet b;
-    protected double metric;
+    protected MetricList metric = new MetricList();
 
     public BaseFeedElement() {
         b = new BitSet();
@@ -68,25 +68,34 @@ public class BaseFeedElement {
         this.b.set(e);
     }
 
-    public double getMetric() {
+    public boolean isThresholdSatisfied() {
+    		return metric.isThresholdSatisfied();
+    }
+    
+    
+    public MetricList getMetric() {
         return metric;
     }
 
-    public void setMetric(double metric) {
-        this.metric = metric;
+    public void setMetric(double [] metric) {
+        this.metric.updateMetrics(metric);
+    }
+    
+    public void setMetric(MetricList metric) {
+        this.metric.updateMetrics(metric);
     }
 
     public int getCardinality() {
-        return this.b.cardinality();
+        return (int) this.b.cardinality();
     }
 
-    /*
+	/*
      * Cardinality divided by 2 gives you the actual number of dimensions or
-     * values in the input record.
-     */
+	 * values in the input record.
+	 */
 
     public int getNumberofDimVals() {
-        return this.b.cardinality() / 2;
+        return (int) (this.b.cardinality() / 2);
     }
 
     public String toString() {

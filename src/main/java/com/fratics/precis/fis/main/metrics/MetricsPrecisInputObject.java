@@ -2,12 +2,14 @@ package com.fratics.precis.fis.main.metrics;
 
 import com.fratics.precis.exception.PrecisException;
 import com.fratics.precis.fis.base.InputObject;
+import com.fratics.precis.fis.base.MetricList;
 import com.fratics.precis.fis.base.Schema.FieldType;
+
 import static com.fratics.precis.fis.util.Util.isIgnoredWord;
 
 public class MetricsPrecisInputObject extends InputObject {
 
-    //protected static final String DEF_VALUE = "";
+    // protected static final String DEF_VALUE = "";
     private static final long serialVersionUID = 6369672872079922497L;
 
     public MetricsPrecisInputObject() {
@@ -25,20 +27,31 @@ public class MetricsPrecisInputObject extends InputObject {
         if (!this.isInitialized())
             throw new PrecisException("Schema Not Loaded");
         // Schema is loaded, check if metrics index is set.
-        if (this.getMetricIndex() < 0)
+        if (!MetricList.isMetricIndexPresentAndThresholdSet())
             throw new PrecisException("No Metrics Field in Schema");
+        MetricList ml = new MetricList();
+        int metricIndex = 0;
+        for (int i = 0; i < fieldObjects.length; i++) {
+            if (fieldObjects[i].getSchemaElement().fieldType == FieldType.METRIC) {
+            		index = fieldObjects[i].getSchemaElement().fieldIndex;
+            		ml.updateMetrics(metricIndex, Double.parseDouble(str[index]));
+            		metricIndex++;
+            }
+        }
+        index = 0;
+        
         for (int i = 0; i < fieldObjects.length; i++) {
             if (fieldObjects[i].getSchemaElement().fieldType == FieldType.METRIC)
                 continue;
             index = fieldObjects[i].getSchemaElement().fieldIndex;
             if (str[index] == null) {
-                //fieldObjects[i].addFieldValueBy(DEF_VALUE, Double.parseDouble(str[this.metricIndex]));
-                //Ignore Null fields
+                // fieldObjects[i].addFieldValueBy(DEF_VALUE,
+                // Double.parseDouble(str[this.metricIndex]));
+                // Ignore Null fields
                 continue;
             } else {
-                if(!isIgnoredWord(str[index]))
-                    fieldObjects[i].addFieldValueBy(str[index].trim(),
-                        Double.parseDouble(str[this.metricIndex]));
+                if (!isIgnoredWord(str[index]))
+                    fieldObjects[i].addFieldValueBy(str[index].trim(),  MetricList.clone(ml));
             }
         }
     }

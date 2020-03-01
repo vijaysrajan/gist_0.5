@@ -26,8 +26,7 @@ public class PrecisFileStream extends PrecisStream {
     public boolean initialize() throws Exception {
         File file = new File(this.getStreamName());
         if (!(file.exists() && file.canRead()))
-            throw new PrecisException("Error Reading file:: "
-                    + this.getStreamName());
+            throw new PrecisException("Error Reading file:: " + this.getStreamName());
         try {
             this.br = new BufferedReader(new FileReader(file));
         } catch (Exception e) {

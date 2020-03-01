@@ -10,6 +10,7 @@ import java.util.List;
 class RuleResult {
     public String ruleName;
     public boolean result;
+
     public RuleResult(String ruleName, boolean result) {
         this.result = result;
         this.ruleName = ruleName;
@@ -29,8 +30,7 @@ class FieldResult {
     }
 
     public String toString() {
-        return "Field Index :: " + fieldIndex + " Applied Rules ==> { "
-                + rulesResult.toString() + " }";
+        return "Field Index :: " + fieldIndex + " Applied Rules ==> { " + rulesResult.toString() + " }";
     }
 }
 

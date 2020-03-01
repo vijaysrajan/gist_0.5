@@ -1,12 +1,19 @@
 package com.fratics.precis.fis.feed.candidategeneration;
 
 import com.fratics.precis.fis.base.BaseCandidateElement;
+import com.fratics.precis.fis.base.MetricList;
 import com.fratics.precis.fis.base.PrecisProcessor;
 import com.fratics.precis.fis.base.ValueObject;
 import com.fratics.precis.fis.feed.dimval.DimValIndex;
+import com.fratics.precis.fis.util.BitSet;
+import com.fratics.precis.fis.util.PrecisConfigProperties;
 import com.fratics.precis.fis.util.Util;
+import com.fratics.precis.util.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /*
  * This is the Candidate Generator from 3rd Stage Onwards. This is developed as a flow processor.
@@ -24,6 +31,7 @@ public class CandidateGeneratorStg3OnwardsV2 extends PrecisProcessor {
     private ValueObject o;
     private HashMap<BitSet, ArrayList<BaseCandidateElement>> cdParttion;
     private HashSet<BitSet> cdSet;
+    private Logger logger = Logger.getInstance();
 
     public CandidateGeneratorStg3OnwardsV2(int stage) {
         this.currStage = stage;
@@ -37,7 +45,6 @@ public class CandidateGeneratorStg3OnwardsV2 extends PrecisProcessor {
         for (int i = 0; i <= currStage; i++) {
             valIndex = bs1.nextSetBit(valIndex + 1);
         }
-
         int dimIndex = -1;
         for (int i = 0; i < currStage; i++) {
             dimIndex = bs1.nextSetBit(dimIndex + 1);
@@ -76,8 +83,7 @@ public class CandidateGeneratorStg3OnwardsV2 extends PrecisProcessor {
                 for (int j = i + 1; j < bsList.size(); j++) {
                     allOneBS1.xor(bsList.get(j).getBitSet());
                     if (allOneBS1.cardinality() == 4) {
-                        BitSet newCand = (BitSet) bsList.get(i).getBitSet()
-                                .clone();
+                        BitSet newCand = (BitSet) bsList.get(i).getBitSet().clone();
                         newCand.or(bsList.get(j).getBitSet());
                         // Check all combinations of the current candidate in
                         // the
@@ -99,37 +105,32 @@ public class CandidateGeneratorStg3OnwardsV2 extends PrecisProcessor {
         cdParttion = o.inputObject.prevCandidatePart;
         cdSet = o.inputObject.prevCandidateSet;
         o.inputObject.currentStage = currStage;
-        System.err.println("Current Stage ::" + this.currStage);
-        System.err.println("No of Candidates from Previous Stage ::"
-                + o.inputObject.prevCandidateSet.size());
+        logger.info("Current Stage ::" + this.currStage);
+        logger.info("No of Candidates from Previous Stage ::" + o.inputObject.prevCandidateSet.size());
 
         // Generate Cross Product
         long milliSec1 = new Date().getTime();
         crossProduct();
         long milliSec2 = new Date().getTime();
-        System.err.println("No of Candidates Before Applying Threshold::"
-                + o.inputObject.currCandidateSet.size());
-        System.err.println("Time taken in MilliSec for Candidate Gen ::"
-                + (milliSec2 - milliSec1));
+        logger.info("No of Candidates Before Applying Threshold::" + o.inputObject.currCandidateSet.size());
+        logger.info("Time taken in MilliSec for Candidate Gen ::" + (milliSec2 - milliSec1));
         milliSec1 = new Date().getTime();
-        for (ArrayList<BaseCandidateElement> al : o.inputObject.currCandidatePart
-                .values()) {
+        for (ArrayList<BaseCandidateElement> al : o.inputObject.currCandidatePart.values()) {
             for (BaseCandidateElement bce : al) {
                 o.inputObject.apply(bce);
             }
         }
 
         // Apply the threshold handler.
+        double [] currentThreshold = MetricList.getThreshold();
+        o.inputObject.setThreshold(currentThreshold);
         boolean ret = o.inputObject.applyThreshold();
         milliSec2 = new Date().getTime();
-        System.err.println("No of Candidates After Applying Threshold::"
-                + o.inputObject.currCandidateSet.size());
-        System.err.println("Time taken in MilliSec for Applying Threshold ::"
-                + (milliSec2 - milliSec1));
+        logger.info("No of Candidates After Applying Threshold::" + o.inputObject.currCandidateSet.size());
+        logger.info("Time taken in MilliSec for Applying Threshold ::" + (milliSec2 - milliSec1));
         // Dump the Candidate Stage.
-        if (ret)
-            Util.dump(this.currStage, o);
-
+        if (ret) Util.dump(this.currStage, o);
+        //Applying the next stage threshold for candidate generation.
         // Move the precis context to next stage - 3
         o.inputObject.moveToNextStage();
         return ret;

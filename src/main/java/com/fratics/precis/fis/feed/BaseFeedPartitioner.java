@@ -60,8 +60,7 @@ public class BaseFeedPartitioner {
     // Method to dump the contents of the partition.
     public void dump() {
         try {
-            PrintWriter pw = new PrintWriter(new File(
-                    PrecisConfigProperties.BITSET_FEED_FILENAME));
+            PrintWriter pw = new PrintWriter(new File(PrecisConfigProperties.BITSET_FEED_FILENAME));
             pw.append(this.toString());
             pw.flush();
             pw.close();
@@ -76,8 +75,8 @@ public class BaseFeedPartitioner {
         for (int i = 0; i < partitionMap.length; i++) {
             ArrayList<BaseFeedElement> al = partitionMap[i];
             // if(al.size() > 0 )
-            str = str + "Partition Number :: " + i + ", No Of Elements :: "
-                    + al.size() + ", Values :: " + al.toString() + "\n";
+            str = str + "Partition Number :: " + i + ", No Of Elements :: " + al.size() + ", Values :: " + al.toString()
+                    + "\n";
         }
         return str;
     }
@@ -100,31 +99,28 @@ public class BaseFeedPartitioner {
         public BaseFeedPartitionerReader(int stage) {
             this.currentStage = stage - 1; // index starts from "0".
             this.currentIndex = 0;
-            while (this.currentStage < partitionMap.length
-                    && partitionMap[this.currentStage].size() == 0)
+            while (this.currentStage < partitionMap.length && partitionMap[this.currentStage].size() == 0)
                 this.currentStage++;
         }
 
         // Checks if Base Feed Elements are present for the stage
         // in the partition object.
         public boolean hasNext() {
-            return ((this.currentStage < partitionMap.length) && (this.currentIndex < partitionMap[this.currentStage]
-                    .size()));
+            return ((this.currentStage < partitionMap.length)
+                    && (this.currentIndex < partitionMap[this.currentStage].size()));
         }
 
         // Returns the next available base feed element from the
         // partition object.
         public BaseFeedElement getNext() {
-            // System.err.println("Current Index ::" + this.currentIndex +
+            // logger.info("Current Index ::" + this.currentIndex +
             // " Current Stage ::" + this.currentStage);
-            BaseFeedElement e = partitionMap[this.currentStage]
-                    .get(currentIndex);
+            BaseFeedElement e = partitionMap[this.currentStage].get(currentIndex);
             this.currentIndex++;
             if (currentIndex >= partitionMap[this.currentStage].size()) {
                 this.currentIndex = 0;
                 this.currentStage++;
-                while ((this.currentStage < partitionMap.length)
-                        && (partitionMap[this.currentStage].size() <= 0))
+                while ((this.currentStage < partitionMap.length) && (partitionMap[this.currentStage].size() <= 0))
                     this.currentStage++;
             }
             return e;

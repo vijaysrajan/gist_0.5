@@ -10,11 +10,9 @@ public class UniqueValueRule extends SanitationRuleBase {
         FieldObject[] fo = vo.inputObject.getFieldObjects();
         for (int i = 0; i < fo.length; i++) {
             if (fo[i].getNumberOfUniques() == numOfLines) {
-                vo.resultObject.loadResult(new SingleRuleResult(ruleName, true,
-                        i));
+                vo.resultObject.loadResult(new SingleRuleResult(ruleName, true, i));
             } else {
-                vo.resultObject.loadResult(new SingleRuleResult(ruleName,
-                        false, i));
+                vo.resultObject.loadResult(new SingleRuleResult(ruleName, false, i));
             }
         }
     }

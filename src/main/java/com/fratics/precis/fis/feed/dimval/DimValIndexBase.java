@@ -38,15 +38,13 @@ public abstract class DimValIndexBase extends PrecisProcessor {
 
     // To String method to dump all Maps.
     public static String dumpIndexes() {
-        return dimMap + "\n" + dimValMap + "\n" + revDimMap + "\n"
-                + revDimValMap + "\n";
+        return dimMap + "\n" + dimValMap + "\n" + revDimMap + "\n" + revDimValMap + "\n";
     }
 
     // Dumps the Maps to a feed file for debugging.
     public void dump() throws Exception {
         try {
-            PrintWriter pw = new PrintWriter(new File(
-                    PrecisConfigProperties.DIM_FEED));
+            PrintWriter pw = new PrintWriter(new File(PrecisConfigProperties.DIM_FEED));
             pw.append(dimMap.toString());
             pw.flush();
             pw.close();
